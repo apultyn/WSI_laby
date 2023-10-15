@@ -1,0 +1,34 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+*.env/
+
+# IDE-specific files
+.vscode/
+*.code-workspace
+
+# Logs
+*.log
+
+# Compiled Python files
+*.pyc
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Sensitive or environment-specific files
+.env
+
+# Package distribution
+/dist/
+/build/
+
+# Dependency folders
+lib/
+lib64/
