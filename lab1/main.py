@@ -35,7 +35,7 @@ def plot_2D(function, trajectory, x_values, title):
     ax.set_ylabel('f(x)')
     ax.legend()
 
-    plt.savefig("optimized_f.pdf")
+    plt.savefig("plots/optimized_f.pdf")
     plt.show()
 
 
@@ -58,7 +58,7 @@ def plot_3D(function, trajectory, x_values, title):
     ax.set_ylabel('x2')
     ax.legend()
 
-    plt.savefig("optimized_g.pdf")
+    plt.savefig("plots/optimized_g.pdf")
     plt.show()
 
 
@@ -100,7 +100,7 @@ def compare_steps_f():
     plt.xlabel('Step Length')
     plt.ylabel('Average Number of Steps')
     plt.grid(True)
-    plt.savefig("steps_f.pdf")
+    plt.savefig("plots/steps_f.pdf")
     plt.show()
 
 
@@ -125,7 +125,7 @@ def compare_steps_g():
     plt.xlabel('Step Length')
     plt.ylabel('Average Number of Steps')
     plt.grid(True)
-    plt.savefig("steps_g.pdf")
+    plt.savefig("plots/steps_g.pdf")
     plt.show()
 
 
