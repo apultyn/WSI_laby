@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 from gradient import Gradient_descent
 
 
@@ -60,15 +61,27 @@ def plot_3D(function, trajectory, x_values, title):
 
 
 def main():
-    func_f = Gradient_descent(f, gradient_f, 1, 0.1, 0.001)
-    trajectory_f = func_f.solve(np.array([-2.5]))
-    x_values_f = np.linspace(-4, 4, 100)
-    plot_2D(f, trajectory_f, x_values_f, 'Gradient Descent for f(x)')
 
-    func_g = Gradient_descent(g, gradient_g, 0.5, 0.1, 0.001)
-    trajectory_g = func_g.solve(np.array([-1.5, 2]))
-    x_values_g = np.linspace(-4, 4, 100)
-    plot_3D(g, trajectory_g, x_values_g, 'Gradient Descent for g(x)')
+    # Minimum of f(x):
+    # func_f = Gradient_descent(f, gradient_f, 0.5, 0.1, 0.001)
+    # trajectory_f = func_f.solve(np.array([-2.5]))
+    # x_values_f = np.linspace(-4, 4, 100)
+    # plot_2D(f, trajectory_f, x_values_f, 'Gradient Descent for f(x)')
+
+    # # Minimum of g(x):
+    # func_g = Gradient_descent(g, gradient_g, 0.5, 0.1, 0.001)
+    # trajectory_g = func_g.solve(np.array([-1.5, 2]))
+    # x_values_g = np.linspace(-4, 4, 100)
+    # plot_3D(g, trajectory_g, x_values_g, 'Gradient Descent for g(x)')
+
+    # Step comparasion for f(x):
+    steps_len = [0.1, 0.3, 0.5, 0.7, 1, 2]
+    for step_len in steps_len:
+        amount_steps = []
+        gradient = Gradient_descent(f, gradient_f, step_len, 0.1, 0.001)
+        for _ in range(20):
+            amount_steps.append(len(gradient.solve(round(random.uniform(-10.0, 10.0), 2))))
+        print(f"Average step amount for step length: {step_len}")
 
 
 if __name__ == "__main__":
