@@ -35,6 +35,7 @@ def plot_2D(function, trajectory, x_values, title):
     ax.set_ylabel('f(x)')
     ax.legend()
 
+    plt.savefig("optimized_f.pdf")
     plt.show()
 
 
@@ -57,6 +58,7 @@ def plot_3D(function, trajectory, x_values, title):
     ax.set_ylabel('x2')
     ax.legend()
 
+    plt.savefig("optimized_g.pdf")
     plt.show()
 
 
@@ -121,8 +123,8 @@ def compare_steps_g():
 
 
 def main():
-    # plot_minimum_f(-2.5, 0.5, 0.1, 0.001)
-    # plot_minimum_g([-1.5, 2.0], 0.5, 0.1, 0.001)
+    plot_minimum_f(-2.5, 0.5, 0.1, 0.001)
+    plot_minimum_g([-1.5, 2.0], 0.5, 0.1, 0.001)
     compare_steps_f()
     compare_steps_g()
 
