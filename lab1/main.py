@@ -93,6 +93,7 @@ def compare_steps_f():
     plt.xlabel('Step Length')
     plt.ylabel('Average Number of Steps')
     plt.grid(True)
+    plt.savefig("steps_f.pdf")
     plt.show()
 
 
@@ -115,6 +116,7 @@ def compare_steps_g():
     plt.xlabel('Step Length')
     plt.ylabel('Average Number of Steps')
     plt.grid(True)
+    plt.savefig("steps_g.pdf")
     plt.show()
 
 
