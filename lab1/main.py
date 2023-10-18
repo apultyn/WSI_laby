@@ -75,13 +75,26 @@ def main():
     # plot_3D(g, trajectory_g, x_values_g, 'Gradient Descent for g(x)')
 
     # Step comparasion for f(x):
-    steps_len = [0.1, 0.3, 0.5, 0.7, 1, 2]
+    steps_len = [0.01, 0.05, 0.1, 0.3, 0.5, 0.7, 1, 2, 5, 10, 20, 50, 70, 100]
+    print("Average step amount for f(x) for step length:")
     for step_len in steps_len:
         amount_steps = []
-        gradient = Gradient_descent(f, gradient_f, step_len, 0.1, 0.001)
-        for _ in range(20):
-            amount_steps.append(len(gradient.solve(round(random.uniform(-10.0, 10.0), 2))))
-        print(f"Average step amount for step length: {step_len}")
+        gradient = Gradient_descent(f, gradient_f, step_len, 0.1, 0.01)
+        for _ in range(50):
+            starting_point = np.array([round(random.uniform(-10.0, 10.0), 2)])
+            amount_steps.append(len(gradient.solve(starting_point)))
+        print(f"Len: {step_len} Amount: {sum(amount_steps) / len(amount_steps)}")
+
+    # Step comparasion for g(x):
+    print("Average step amount for g(x) for step length:")
+    steps_len = [0.01, 0.05, 0.1, 0.3, 0.5, 0.7, 1, 2, 5, 10, 20, 50, 70, 100]
+    for step_len in steps_len:
+        amount_steps = []
+        gradient = Gradient_descent(g, gradient_g, step_len, 0.1, 0.01)
+        for _ in range(50):
+            starting_point = np.array([round(random.uniform(-2.0, 2.0), 2), round(random.uniform(-2.0, 2.0), 2)])
+            amount_steps.append(len(gradient.solve(starting_point)))
+        print(f"Len: {step_len} Amount: {sum(amount_steps) / len(amount_steps)}")
 
 
 if __name__ == "__main__":
