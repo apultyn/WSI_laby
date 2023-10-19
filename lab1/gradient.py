@@ -36,7 +36,8 @@ class Gradient_descent(Solver):
         while not precision_achieved:
             new_current_point = (current_point - step *
                                  self._gradient(current_point))
-            if self._function(new_current_point) >= self._function(current_point):
+            if (self._function(new_current_point) >=
+                    self._function(current_point)):
                 step *= self._decrease_coefficient
             else:
                 current_point = new_current_point
