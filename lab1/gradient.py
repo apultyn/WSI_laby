@@ -7,7 +7,10 @@ class Gradient_descent(Solver):
                  decrease_coefficient, precision):
         self._function = func
         self._gradient = gradient
-        self._starting_step = starting_step
+        if starting_step <= 0:
+            raise ValueError("Length of step must be a positive value")
+        else:
+            self._starting_step = starting_step
         self._decrease_coefficient = decrease_coefficient
         self._precision = precision
 
@@ -44,7 +47,7 @@ class Gradient_descent(Solver):
                 trajectory.append(current_point)
 
                 for value in self._gradient(current_point):
-                    if np.fabs(value) > self._precision:
+                    if np.fabs(value) * step > self._precision:
                         break
                     precision_achieved = True
 
