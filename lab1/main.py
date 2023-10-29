@@ -56,6 +56,7 @@ def plot_3D(function, trajectory, x_values, title):
     ax.set_title(title)
     ax.set_xlabel('x1')
     ax.set_ylabel('x2')
+    ax.set_zlabel('value')
     ax.legend()
 
     plt.savefig("plots/optimized_g.pdf")
@@ -67,7 +68,8 @@ def plot_minimum_f(function, gradient, starting_point, starting_step,
     func_f = Gradient_descent(function, gradient, starting_step,
                               decrease_coefficient, precision)
     trajectory_f = func_f.solve(np.array([starting_point]))
-    x_values_f = np.linspace(-4, 4, 100)
+    x_values_f = np.linspace(-np.fabs(starting_point) - 5,
+                             np.fabs(starting_point) + 5, 100)
     plot_2D(f, trajectory_f, x_values_f, 'Gradient Descent for f(x)')
 
 
@@ -76,18 +78,21 @@ def plot_minimum_g(function, gradient, starting_point, starting_step,
     func_g = Gradient_descent(function, gradient, starting_step,
                               decrease_coefficient, precision)
     trajectory_g = func_g.solve(np.array(starting_point))
-    x_values_g = np.linspace(-4, 4, 100)
+    x_values_g = np.linspace(-5, 5, 100)
     plot_3D(g, trajectory_g, x_values_g, 'Gradient Descent for g(x)')
 
 
-def compare_steps_f(function, gradient):
-    steps_len = np.arange(1, 50, 1)
+def compare_steps_f(function, gradient, steps_len,
+                    decrease_coefficient, precision):
     avg_steps_f = []
 
     for step_len in steps_len:
         amount_steps = []
-        algorithm_object = Gradient_descent(function, gradient,
-                                            step_len, 0.1, 0.01)
+        algorithm_object = Gradient_descent(function,
+                                            gradient,
+                                            step_len,
+                                            decrease_coefficient,
+                                            precision)
         for _ in range(100):
             starting_point = np.array([round(random.uniform(-10.0, 10.0), 2)])
             amount_steps.append(len(algorithm_object.solve(starting_point)))
@@ -105,14 +110,17 @@ def compare_steps_f(function, gradient):
     plt.show()
 
 
-def compare_steps_g(function, gradient):
-    steps_len = np.arange(0.01, 2, 0.01)
+def compare_steps_g(function, gradient, steps_len,
+                    decrease_coefficient, precision):
     avg_steps_g = []
 
     for step_len in steps_len:
         amount_steps = []
-        algorithm_object = Gradient_descent(function, gradient,
-                                            step_len, 0.1, 0.001)
+        algorithm_object = Gradient_descent(function,
+                                            gradient,
+                                            step_len,
+                                            decrease_coefficient,
+                                            precision)
         for _ in range(50):
             starting_point = np.array([round(random.uniform(-2.0, 2.0), 2),
                                        round(random.uniform(-2.0, 2.0), 2)])
@@ -132,10 +140,10 @@ def compare_steps_g(function, gradient):
 
 
 def main():
-    # plot_minimum_f(f, gradient_f, -2.5, 0.5, 0.1, 0.001)
-    # plot_minimum_g(g, gradient_g, [-1.5, 2.0], 0.5, 0.1, 0.001)
-    compare_steps_f(f, gradient_f)
-    # compare_steps_g(g, gradient_g)
+    plot_minimum_f(f, gradient_f, -18, 0.5, 0.1, 0.001)
+    plot_minimum_g(g, gradient_g, [-2, 1], 1.5, 0.1, 0.001)
+    compare_steps_f(f, gradient_f, np.logspace(-2, 1, 100), 0.1, 0.01)
+    compare_steps_g(g, gradient_g, np.logspace(-1, 1, 100), 0.1, 0.01)
 
 
 if __name__ == "__main__":
