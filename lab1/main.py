@@ -70,6 +70,7 @@ def plot_minimum_f(function, gradient, starting_point, starting_step,
     trajectory_f = func_f.solve(np.array([starting_point]))
     x_values_f = np.linspace(-np.fabs(starting_point) - 5,
                              np.fabs(starting_point) + 5, 100)
+    print(f"Steps: {len(trajectory_f)}")
     plot_2D(f, trajectory_f, x_values_f, 'Gradient Descent for f(x)')
 
 
@@ -79,11 +80,13 @@ def plot_minimum_g(function, gradient, starting_point, starting_step,
                               decrease_coefficient, precision)
     trajectory_g = func_g.solve(np.array(starting_point))
     x_values_g = np.linspace(-5, 5, 100)
+    print(f"Steps: {len(trajectory_g)}")
     plot_3D(g, trajectory_g, x_values_g, 'Gradient Descent for g(x)')
 
 
 def compare_steps_f(function, gradient, steps_len,
-                    decrease_coefficient, precision):
+                    decrease_coefficient, precision,
+                    file_name):
     avg_steps_f = []
 
     for step_len in steps_len:
@@ -106,12 +109,13 @@ def compare_steps_f(function, gradient, steps_len,
     plt.xlabel('Step Length')
     plt.ylabel('Average Number of Steps')
     plt.grid(True)
-    plt.savefig("plots/steps_f.pdf")
+    plt.savefig(f"plots/{file_name}.pdf")
     plt.show()
 
 
 def compare_steps_g(function, gradient, steps_len,
-                    decrease_coefficient, precision):
+                    decrease_coefficient, precision,
+                    file_name):
     avg_steps_g = []
 
     for step_len in steps_len:
@@ -135,15 +139,18 @@ def compare_steps_g(function, gradient, steps_len,
     plt.xlabel('Step Length')
     plt.ylabel('Average Number of Steps')
     plt.grid(True)
-    plt.savefig("plots/steps_g.pdf")
+    plt.savefig(f"plots/{file_name}.pdf")
     plt.show()
 
 
 def main():
     plot_minimum_f(f, gradient_f, -18, 0.5, 0.1, 0.001)
     plot_minimum_g(g, gradient_g, [-2, 1], 1.5, 0.1, 0.001)
-    compare_steps_f(f, gradient_f, np.logspace(-2, 1, 100), 0.1, 0.01)
-    compare_steps_g(g, gradient_g, np.logspace(-1, 1, 100), 0.1, 0.01)
+
+    compare_steps_g(g, gradient_g, np.logspace(-2, 3, 100, True),
+                    0.1, 0.001, "g_random_logspace")
+    compare_steps_g(g, gradient_g, np.arange(10, 10000, 10),
+                    0.1, 0.001, "g_powers_of_10")
 
 
 if __name__ == "__main__":
