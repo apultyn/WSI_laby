@@ -98,7 +98,8 @@ def compare_steps_f(function, gradient, steps_len,
                                             precision)
         for _ in range(100):
             starting_point = np.array([round(random.uniform(-30.0, 30.0), 2)])
-            amount_steps.append(len(algorithm_object.solve(starting_point)) - 1)
+            amount_steps.append(len(
+                algorithm_object.solve(starting_point)) - 1)
         avg_steps_f.append(sum(amount_steps) / len(amount_steps))
         avg = sum(amount_steps) / len(amount_steps)
         print(f"Len: {step_len} Amount: {avg}")
@@ -130,10 +131,11 @@ def compare_steps_g(function, gradient, steps_len,
         for _ in range(50):
             starting_point = np.array([round(random.uniform(-2.0, 2.0), 2),
                                        round(random.uniform(-2.0, 2.0), 2)])
-            amount_steps.append(len(algorithm_object.solve(starting_point)) - 1)
+            amount_steps.append(len(
+                algorithm_object.solve(starting_point)) - 1)
         avg_steps_g.append(sum(amount_steps) / len(amount_steps))
         avg = sum(amount_steps) / len(amount_steps)
-        # print(f"Len: {step_len} Amount: {avg}")
+        print(f"Len: {step_len} Amount: {avg}")
 
     print(f"Average amount of steps: {np.average(avg_steps_g)}")
     print(f"Min: {np.min(avg_steps_g)}, Max: {np.max(avg_steps_g)}")
