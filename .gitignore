@@ -32,3 +32,6 @@ env/
 # Dependency folders
 lib/
 lib64/
+
+# Project-specified
+tests/
