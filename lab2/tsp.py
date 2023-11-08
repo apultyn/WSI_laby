@@ -21,6 +21,40 @@ class TSP(Solver):
             "mutate_rate": self._mutate_rate
         }
 
+    def calc_value(self, order):
+        value = 0
+        for i in range(len(order) - 1):
+            value += np.sqrt(
+                np.square(self._cities[order[i+1]][0] -
+                          self._cities[order[i]][0]) +
+                np.square(self._cities[order[i+1]][1] -
+                          self._cities[order[i]][1]))
+        value += np.sqrt(
+            np.square(self._cities[order[-1]][0] -
+                      self._cities[order[0]][0]) +
+            np.square(self._cities[order[-1]][1] -
+                      self._cities[order[0]][1]))
+        return value
+
+    def pair(self, parent1, parent2):
+        separator = int(len(parent1) * self._alpha)
+
+        head_first = parent1[:separator]
+        head_second = parent2[:separator]
+        tail_first = parent1[separator:]
+        tail_second = parent2[separator:]
+
+        if np.array_equal(head_first, head_second):
+            return parent1
+
+        mapping = {tail_second[i]: tail_first[i] for i in range(len(tail_first))}
+
+        for i in range(len(head_first)):
+            while head_first[i] in tail_second:
+                head_first[i] = mapping[head_first[i]]
+
+        return np.concatenate((head_first, tail_second))
+
     def solve(self, epochs, starting_population,
               parents, mutate_rate, alpha):
         self._epochs = epochs
@@ -29,20 +63,6 @@ class TSP(Solver):
         self._mutate_rate = mutate_rate
         self._alpha = alpha
 
-        def calc_value(order):
-            value = 0
-            for i in range(len(order) - 1):
-                value += np.sqrt(
-                    np.square(self._cities[order[i+1]][0] -
-                              self._cities[order[i]][0]) +
-                    np.square(self._cities[order[i+1]][1] -
-                              self._cities[order[i]][1]))
-            value += np.sqrt(
-                np.square(self._cities[order[-1]][0] -
-                          self._cities[order[0]][0]) +
-                np.square(self._cities[order[-1]][1] -
-                          self._cities[order[0]][1]))
-            return value
 
         if parents > starting_population:
             raise ValueError("Not enough population for this amount of parents")
@@ -52,35 +72,31 @@ class TSP(Solver):
         population = []
         for _ in range(starting_population):
             order = np.random.permutation(len(self._cities))
-            population.append((order, calc_value(order)))
+            population.append((order, self.calc_value(order)))
 
         population.sort(key=lambda x: x[1])
 
         for _ in range(epochs):
+            for element in population:
+                print(element[0])
             parents_list = population[:parents]
+
+            print("Parents: ")
+            for parent in parents_list:
+                print(parent[0])
+
             for i in range(0, parents, 2):
-                parent1, parent2 = parents_list[i], parents_list[i+1]
-                separator = int(len(parent1[0]) * self._alpha)
-
-                head_first = parent1[0][:separator]
-                tail_first = parent1[0][separator:]
-                tail_second = parent2[0][separator:]
-
-                mapping = {tail_second[i]: tail_first[i] for i in range(len(tail_first))}
-
-                for i in range(len(head_first)):
-                    while head_first[i] in tail_second:
-                        head_first[i] = mapping[head_first[i]]
-
-                offspring_order = np.concatenate((head_first, tail_second))
-
-                if np.random.random() < self._mutate_rate:
-                    j, k = np.random.choice(range(len(parent1[0])), 2, replace=False)
-                    offspring_order[j], offspring_order[k] = offspring_order[k], offspring_order[j]
-                population.append((offspring_order, calc_value(offspring_order)))
+                parent1, parent2 = parents_list[i][0], parents_list[i+1][0]
+                print(f"Pairing {parent1} with {parent2}")
+                offspring = self.pair(parent1, parent2)
+                print(f"It gave offspring: {offspring}")
+                # if np.random.random() < self._mutate_rate:
+                #     j, k = np.random.choice(range(len(parent1)), 2, replace=False)
+                #     offspring[j], offspring[k] = offspring[k], offspring[j]
+                population.append((offspring, self.calc_value(offspring)))
             population.sort(key=lambda x: x[1])
             del population[-(parents // 2):]
-            print("New population")
 
-        print("After: ")
-        print(population[:10])
+        print("3 shortest ways:")
+        for i in range(3):
+            print(population[i][0])
