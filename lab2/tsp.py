@@ -53,7 +53,7 @@ class TSP(Solver):
             while head_first[i] in tail_second:
                 head_first[i] = mapping[head_first[i]]
 
-        return np.concatenate((head_first, tail_second))
+        return np.ndarray.tolist(np.concatenate((head_first, tail_second)))
 
     def solve(self, epochs, starting_population,
               parents, mutate_rate, alpha):
@@ -71,28 +71,21 @@ class TSP(Solver):
 
         population = []
         for _ in range(starting_population):
-            order = np.random.permutation(len(self._cities))
+            order = np.ndarray.tolist(np.random.permutation(len(self._cities)))
             population.append((order, self.calc_value(order)))
 
         population.sort(key=lambda x: x[1])
 
-        for _ in range(epochs):
-            for element in population:
-                print(element[0])
+        for i in range(epochs):
+            print(f"Epoch: {i+1}")
             parents_list = population[:parents]
 
-            print("Parents: ")
-            for parent in parents_list:
-                print(parent[0])
-
-            for i in range(0, parents, 2):
-                parent1, parent2 = parents_list[i][0], parents_list[i+1][0]
-                print(f"Pairing {parent1} with {parent2}")
+            for j in range(0, parents, 2):
+                parent1, parent2 = parents_list[j][0], parents_list[j+1][0]
                 offspring = self.pair(parent1, parent2)
-                print(f"It gave offspring: {offspring}")
-                # if np.random.random() < self._mutate_rate:
-                #     j, k = np.random.choice(range(len(parent1)), 2, replace=False)
-                #     offspring[j], offspring[k] = offspring[k], offspring[j]
+                if np.random.random() < self._mutate_rate:
+                    j, k = np.random.choice(range(len(parent1)), 2, replace=False)
+                    offspring[j], offspring[k] = offspring[k], offspring[j]
                 population.append((offspring, self.calc_value(offspring)))
             population.sort(key=lambda x: x[1])
             del population[-(parents // 2):]
