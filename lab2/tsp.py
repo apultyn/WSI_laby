@@ -1,4 +1,5 @@
 from solver import Solver
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -47,13 +48,33 @@ class TSP(Solver):
         if np.array_equal(head_first, head_second):
             return parent1
 
-        mapping = {tail_second[i]: tail_first[i] for i in range(len(tail_first))}
+        mapping = {tail_second[i]: tail_first[i]
+                   for i in range(len(tail_first))}
 
         for i in range(len(head_first)):
             while head_first[i] in tail_second:
                 head_first[i] = mapping[head_first[i]]
 
         return np.ndarray.tolist(np.concatenate((head_first, tail_second)))
+
+    def plot_result(self, order):
+        x = [self._cities[i][0] for i in order]
+        y = [self._cities[i][1] for i in order]
+
+        # Connect the last and first points to form a closed loop
+        x.append(x[0])
+        y.append(y[0])
+
+        plt.plot(x, y, marker='o', linestyle='-')
+        plt.title('Shortest Way')
+        plt.show()
+
+    def plot_evolution(self, shortest):
+        plt.plot(range(1, self._epochs + 2), shortest)
+        plt.title('Evolution of Shortest Way Length')
+        plt.xlabel('Epochs')
+        plt.ylabel('Shortest Way Length')
+        plt.show()
 
     def solve(self, epochs, starting_population,
               parents, mutate_rate, alpha):
@@ -63,9 +84,9 @@ class TSP(Solver):
         self._mutate_rate = mutate_rate
         self._alpha = alpha
 
-
         if parents > starting_population:
-            raise ValueError("Not enough population for this amount of parents")
+            raise ValueError(
+                "Not enough population for this amount of parents")
         if parents % 2 != 0:
             raise ValueError("Amount of parents must be even number")
 
@@ -76,6 +97,9 @@ class TSP(Solver):
 
         population.sort(key=lambda x: x[1])
 
+        shortest_list = [population[0][1]]
+
+
         for i in range(epochs):
             print(f"Epoch: {i+1}")
             parents_list = population[:parents]
@@ -84,12 +108,13 @@ class TSP(Solver):
                 parent1, parent2 = parents_list[j][0], parents_list[j+1][0]
                 offspring = self.pair(parent1, parent2)
                 if np.random.random() < self._mutate_rate:
-                    j, k = np.random.choice(range(len(parent1)), 2, replace=False)
+                    j, k = np.random.choice(
+                        range(len(parent1)), 2, replace=False)
                     offspring[j], offspring[k] = offspring[k], offspring[j]
                 population.append((offspring, self.calc_value(offspring)))
             population.sort(key=lambda x: x[1])
+            shortest_list.append(population[0][1])
             del population[-(parents // 2):]
 
-        print("3 shortest ways:")
-        for i in range(3):
-            print(population[i][0])
+        self.plot_result(population[0][0])
+        self.plot_evolution(shortest_list)
