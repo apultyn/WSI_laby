@@ -7,9 +7,11 @@ class TSP(Solver):
     def __init__(self, cities: list):
         self._cities = cities
         self._epochs = None
+        self._limit = None
         self._starting_population = None
         self._parents = None
         self._mutate_rate = None
+        self._mutate_amount = None
         self._alpha = None
 
     def get_parameters(self):
@@ -69,19 +71,21 @@ class TSP(Solver):
         plt.title('Shortest Way')
         plt.show()
 
-    def plot_evolution(self, shortest):
-        plt.plot(range(1, self._epochs + 2), shortest)
+    def plot_evolution(self, shortest, epochs):
+        plt.plot(range(1, epochs + 2), shortest)
         plt.title('Evolution of Shortest Way Length')
         plt.xlabel('Epochs')
         plt.ylabel('Shortest Way Length')
         plt.show()
 
-    def solve(self, epochs, starting_population,
-              parents, mutate_rate, alpha):
+    def solve(self, epochs, limit, starting_population,
+              parents, mutate_rate, mutate_amount, alpha):
         self._epochs = epochs
+        self._limit = limit
         self._starting_population = starting_population
         self._parents = parents
         self._mutate_rate = mutate_rate
+        self._mutate_amount = mutate_amount
         self._alpha = alpha
 
         if parents > starting_population:
@@ -98,7 +102,9 @@ class TSP(Solver):
         population.sort(key=lambda x: x[1])
 
         shortest_list = [population[0][1]]
-
+        shortest_prev = None
+        count_repeated = 0
+        count = epochs
 
         for i in range(epochs):
             print(f"Epoch: {i+1}")
@@ -108,13 +114,26 @@ class TSP(Solver):
                 parent1, parent2 = parents_list[j][0], parents_list[j+1][0]
                 offspring = self.pair(parent1, parent2)
                 if np.random.random() < self._mutate_rate:
-                    j, k = np.random.choice(
-                        range(len(parent1)), 2, replace=False)
-                    offspring[j], offspring[k] = offspring[k], offspring[j]
+                    for _ in range(np.random.randint(0, self._mutate_amount)):
+                        j, k = np.random.choice(
+                            range(len(parent1)), 2, replace=False)
+                        offspring[j], offspring[k] = offspring[k], offspring[j]
                 population.append((offspring, self.calc_value(offspring)))
             population.sort(key=lambda x: x[1])
-            shortest_list.append(population[0][1])
+
+            shortest = population[0][1]
+            shortest_list.append(shortest)
+
+            if shortest_prev is None or shortest < shortest_prev:
+                shortest_prev = shortest
+                count_repeated = 1
+            else:
+                count_repeated += 1
+            if count_repeated > limit:
+                count = i + 1
+                break
+
             del population[-(parents // 2):]
 
         self.plot_result(population[0][0])
-        self.plot_evolution(shortest_list)
+        self.plot_evolution(shortest_list, count)

@@ -47,10 +47,11 @@ solver4 = TSP(random)
 
 
 def main():
-    # solver.solve(1000, 1000, 600, 0.5, 0.7)
-    # solver2.solve(10, 10, 4, 0.6, 0.5)
-    # solver3.solve(100, 10000, 4000, 0.6, 0.5)
-    solver4.solve(10000, 1000, 400, 0.7, 0.5)
+    # solver.solve(1000, 400, 10000, 4000, 0.8, 0.5)
+    solver4.solve(10000, 5000, 1000, 800, 0.7, 5, 0.5)
+    # solver2.solve(10000, 3000, 10, 4, 0.7, 0.3)
+    # solver3.solve(10000, 3000,  10000, 4000, 0.3, 0.7)
+    # solver4.solve(10000, 3000, 1000, 400, 0.7, 0.3)
 
 
 if __name__ == "__main__":
