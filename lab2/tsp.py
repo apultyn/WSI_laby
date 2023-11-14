@@ -59,7 +59,7 @@ class TSP(Solver):
 
         return np.ndarray.tolist(np.concatenate((head_first, tail_second)))
 
-    def plot_result(self, order):
+    def plot_result(self, order, file_name):
         x = [self._cities[i][0] for i in order]
         y = [self._cities[i][1] for i in order]
 
@@ -69,17 +69,22 @@ class TSP(Solver):
 
         plt.plot(x, y, marker='o', linestyle='-')
         plt.title('Shortest Way')
+        if file_name is not None:
+            plt.savefig(f"plots/{file_name}_result.pdf")
         plt.show()
 
-    def plot_evolution(self, shortest, epochs):
+    def plot_evolution(self, shortest, epochs, file_name):
         plt.plot(range(1, epochs + 2), shortest)
         plt.title('Evolution of Shortest Way Length')
         plt.xlabel('Epochs')
         plt.ylabel('Shortest Way Length')
+        if file_name is not None:
+            plt.savefig(f"plots/{file_name}_evolution.pdf")
         plt.show()
 
     def solve(self, epochs, limit, starting_population,
-              parents, mutate_rate, mutate_amount, alpha):
+              parents, mutate_rate, mutate_amount, alpha,
+              file_name=None):
         self._epochs = epochs
         self._limit = limit
         self._starting_population = starting_population
@@ -135,5 +140,5 @@ class TSP(Solver):
 
             del population[-(parents // 2):]
 
-        self.plot_result(population[0][0])
-        self.plot_evolution(shortest_list, count)
+        self.plot_result(population[0][0], file_name)
+        self.plot_evolution(shortest_list, count, file_name)
