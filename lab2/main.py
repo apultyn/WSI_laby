@@ -40,18 +40,19 @@ solver3 = TSP([
 
 
 random = []
-for _ in range(20):
+for _ in range(50):
     x, y = np.random.randint(-300, 300), np.random.randint(-300, 300)
     random.append([x, y])
 solver4 = TSP(random)
 
 
 def main():
-    # solver.solve(1000, 400, 10000, 4000, 0.8, 0.5)
-    solver4.solve(10, 5000, 1000, 800, 0.7, 5, 0.5)
-    # solver2.solve(10000, 3000, 10, 4, 0.7, 0.3)
-    # solver3.solve(10000, 3000,  10000, 4000, 0.3, 0.7)
-    # solver4.solve(10000, 3000, 1000, 400, 0.7, 0.3)
+    # solver.solve(20000, 10000, 1000, 400, 0.1, 20, 0.5, "task_strong_mutate")
+    # solver.solve(20000, 10000, 1000, 400, 0.8, 5, 0.5, "task_often_mutate")
+    # solver.solve(20000, 10000, 1000, 400, 0.8, 5, 0.5, "task_often_mutate_2")
+    # solver.solve(20000, 10000, 1000, 200, 0.5, 10, 0.5, "low_parents")
+    # solver.solve(20000, 10000, 1000, 800, 0.5, 10, 0.5, "high_parents")
+    solver4.solve(50000, 20000, 1000, 400, 0.8, 20, 0.5, "50_random_cities")
 
 
 if __name__ == "__main__":

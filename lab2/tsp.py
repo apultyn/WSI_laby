@@ -13,15 +13,26 @@ class TSP(Solver):
         self._mutate_rate = None
         self._mutate_amount = None
         self._alpha = None
+        self._result = None
+        self._result_iter = None
 
     def get_parameters(self):
         """Returns last sollution hyperparameters"""
         return {
-            "cities": self._cities,
-            "epochs": self._epochs,
-            "starting_population": self._starting_population,
-            "parents": self._parents,
-            "mutate_rate": self._mutate_rate
+            "parameters": {
+                "cities": self._cities,
+                "epochs": self._epochs,
+                "limit": self._limit,
+                "starting_population": self._starting_population,
+                "parents": self._parents,
+                "mutate_rate": self._mutate_rate,
+                "mutate_amonunt": self._mutate_amount,
+                "alpha": self._alpha
+            },
+            "results": {
+                "length": self._result,
+                "iter_amount": self._result_iter
+            }
         }
 
     def calc_value(self, order):
@@ -69,6 +80,7 @@ class TSP(Solver):
 
         plt.plot(x, y, marker='o', linestyle='-')
         plt.title('Shortest Way')
+
         if file_name is not None:
             plt.savefig(f"plots/{file_name}_result.pdf")
         plt.show()
@@ -139,6 +151,12 @@ class TSP(Solver):
                 break
 
             del population[-(parents // 2):]
+
+        self._result = population[0][1]
+        self._result_iter = len(shortest_list) - 1
+
+        print(f"Result after {self._result_iter} epochs")
+        print(f"Result length: {self._result}")
 
         self.plot_result(population[0][0], file_name)
         self.plot_evolution(shortest_list, count, file_name)
