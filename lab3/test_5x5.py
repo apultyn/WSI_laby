@@ -4,22 +4,22 @@ from min_max import TicTacToe
 def test_board_5():
     game = TicTacToe(5)
     assert game._board == [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0]
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_']
     ]
 
 
 def test_game_over_blank():
     game = TicTacToe(5)
     game._board = [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0]
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_']
     ]
     assert game.game_over(game._board) is False
 
@@ -39,10 +39,10 @@ def test_game_over_full_false():
 def test_game_over_some_false():
     game = TicTacToe(3)
     game._board = [
-        ['x', 0, 'o', 'o', 'x'],
-        ['o', 'x', 'o', 0, 'o'],
+        ['x', '_', 'o', 'o', 'x'],
+        ['o', 'x', 'o', '_', 'o'],
         ['x', 'o', 'x', 'o', 'x'],
-        ['x', 0, 'x', 0, 'x'],
+        ['x', '_', 'x', '_', 'x'],
         ['o', 'x', 'x', 'o', 'o']
     ]
     assert game.game_over(game._board) is False
@@ -51,11 +51,11 @@ def test_game_over_some_false():
 def test_game_over_horizontal_true():
     game = TicTacToe(3)
     game._board = [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        ['o', 'o', 'o', 'o', 0]
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_'],
+        ['_', '_', '_', '_', '_'],
+        ['o', 'o', 'o', 'o', '_']
     ]
     assert game.game_over(game._board) is True
 
@@ -63,11 +63,11 @@ def test_game_over_horizontal_true():
 def test_game_over_vertical_true():
     game = TicTacToe(3)
     game._board = [
-        [0, 0, 0, 0, 'o'],
-        [0, 0, 0, 0, 'o'],
-        [0, 0, 0, 0, 'o'],
-        [0, 0, 0, 0, 'o'],
-        [0, 0, 0, 0, 0]
+        ['_', '_', '_', '_', 'o'],
+        ['_', '_', '_', '_', 'o'],
+        ['_', '_', '_', '_', 'o'],
+        ['_', '_', '_', '_', 'o'],
+        ['_', '_', '_', '_', '_']
     ]
     assert game.game_over(game._board) is True
 
@@ -75,11 +75,11 @@ def test_game_over_vertical_true():
 def test_game_over_diagonal_true():
     game = TicTacToe(3)
     game._board = [
-        [0, 'x', 0, 0, 0],
-        [0, 0, 'x', 0, 0],
-        [0, 0, 0, 'x', 0],
-        [0, 0, 0, 0, 'x'],
-        [0, 0, 0, 0, 0]
+        ['_', 'x', '_', '_', '_'],
+        ['_', '_', 'x', '_', '_'],
+        ['_', '_', '_', 'x', '_'],
+        ['_', '_', '_', '_', 'x'],
+        ['_', '_', '_', '_', '_']
     ]
     assert game.game_over(game._board) is True
 
@@ -99,10 +99,10 @@ def test_game_over_full_true():
 def test_game_over_some_true():
     game = TicTacToe(3)
     game._board = [
-        ['x', 0, 'o', 'o', 'x'],
-        [0, 'x', 'o', 0, 'o'],
+        ['x', '_', 'o', 'o', 'x'],
+        ['_', 'x', 'o', '_', 'o'],
         ['x', 'o', 'x', 'o', 'x'],
-        ['x', 0, 'x', 'x', 'x'],
+        ['x', '_', 'x', 'x', 'x'],
         ['o', 'x', 'x', 'o', 'o']
     ]
     assert game.game_over(game._board) is True

@@ -10,7 +10,7 @@ class TicTacToe(Solver):
         for _ in range(size):
             row = []
             for _ in range(size):
-                row.append(0)
+                row.append('_')
             self._board.append(row)
 
     def print_board(self, board):
@@ -29,24 +29,24 @@ class TicTacToe(Solver):
 
     def check_rows(self, board):
         for row in board:
-            if all(square == row[0] and square != 0 for square in row):
+            if all(square == row[0] and square != '_' for square in row):
                 return True
         return False
 
     def check_columns(self, board):
         for col in range(len(board[0])):
             if all(board[row][col] == board[0][col] and
-                   board[row][col] != 0 for row in range(len(board))):
+                   board[row][col] != '_' for row in range(len(board))):
                 return True
         return False
 
     def check_diagonals(self, board):
         if all(board[i][i] == board[0][0] and
-               board[i][i] != 0 for i in range(len(board))):
+               board[i][i] != '_' for i in range(len(board))):
             return True
 
         if all(board[i][len(board) - 1 - i] == board[0][len(board) - 1] and
-               board[i][len(board) - 1 - i] != 0 for i in range(len(board))):
+               board[i][len(board) - 1 - i] != '_' for i in range(len(board))):
             return True
 
         return False
@@ -57,23 +57,23 @@ class TicTacToe(Solver):
 
         for row in board:
             for i in range(len(row) - 3):
-                if all(row[i + j] == row[i] and row[i] != 0 for j in range(4)):
+                if all(row[i + j] == row[i] and row[i] != '_' for j in range(4)):
                     return True
 
         for col in range(len(board[0])):
             for i in range(len(board) - 3):
                 if all(board[i + j][col] == board[i][col] and
-                       board[i][col] != 0 for j in range(4)):
+                       board[i][col] != '_' for j in range(4)):
                     return True
 
         for i in range(len(board) - 3):
             for j in range(len(board[0]) - 3):
                 if all(board[i + k][j + k] == board[i][j] and
-                       board[i][j] != 0 for k in range(4)):
+                       board[i][j] != '_' for k in range(4)):
                     return True
 
                 if all(board[i + k][j + 3 - k] == board[i][j + 3] and
-                       board[i][j + 3] != 0 for k in range(4)):
+                       board[i][j + 3] != '_' for k in range(4)):
                     return True
 
         return False
@@ -81,42 +81,64 @@ class TicTacToe(Solver):
     def eval(self, position, depth, maximizingPlayer):
         if self.game_over(position):
             if maximizingPlayer:
-                return -10 + depth
+                return -(len(self._board) * len(self._board)) + depth
             else:
-                return 10 - depth
+                return (len(self._board) * len(self._board)) - depth
         else:
             return 0
 
     def min_max(self, position, depth, maximizingPlayer):
         if depth == 0 or self.game_over(position):
-            return (self.eval(position, depth, maximizingPlayer), position)
+            return self.eval(position, depth, maximizingPlayer)
 
         if maximizingPlayer:
             max_value = float('-inf')
-            max_pos = []
             for i in range(len(position)):
                 for j in range(len(position[0])):
-                    if position[i][j] == 0:
+                    if position[i][j] == '_':
                         new_pos = copy.deepcopy(position)
                         new_pos[i][j] = 'x'
-                        value = self.min_max(new_pos, depth - 1, False)[0]
-                        if value > max_value:
-                            max_value = value
-                            max_pos = new_pos
-            return (max_value, max_pos)
+                        max_value = max(max_value,
+                                        self.min_max(new_pos, depth - 1, False))
+            return max_value
         else:
             min_value = float('inf')
-            min_pos = []
             for i in range(len(position)):
                 for j in range(len(position[0])):
-                    if position[i][j] == 0:
+                    if position[i][j] == '_':
                         new_pos = copy.deepcopy(position)
                         new_pos[i][j] = 'o'
-                        value = self.min_max(new_pos, depth - 1, True)[0]
+                        min_value = min(min_value,
+                                        self.min_max(new_pos, depth - 1, True))
+            return min_value
+
+    def find_best_move(self, position, depth, maximizingPlayer):
+        best_move = []
+        if maximizingPlayer:
+            max_value = float('-inf')
+            for i in range(len(position)):
+                for j in range(len(position[0])):
+                    if position[i][j] == '_':
+                        new_pos = copy.deepcopy(position)
+                        new_pos[i][j] = 'x'
+                        value = self.min_max(new_pos, depth, False)
+
+                        if value > max_value:
+                            max_value = value
+                            best_move = new_pos
+        else:
+            min_value = float('inf')
+            for i in range(len(position)):
+                for j in range(len(position[0])):
+                    if position[i][j] == '_':
+                        new_pos = copy.deepcopy(position)
+                        new_pos[i][j] = 'o'
+                        value = self.min_max(new_pos, depth, True)
+
                         if value < min_value:
                             min_value = value
-                            min_pos = new_pos
-            return (min_value, min_pos)
+                            best_move = new_pos
+        return best_move
 
     def play(self, depth):
         while not self.game_over(self._board):
@@ -124,7 +146,7 @@ class TicTacToe(Solver):
             self.print_board(self._board)
             print("Your move (enter row and column separated by space): ")
             row, col = map(int, input().split())
-            if self._board[row][col] == 0:
+            if self._board[row][col] == '_':
                 self._board[row][col] = 'x'
             else:
                 print("Invalid move. Try again.")
@@ -135,8 +157,8 @@ class TicTacToe(Solver):
                 break
 
             # Algorithm's move
-            print(f"\nAlgorithm's move:")
-            self._board = self.min_max(self._board, depth, False)[1]
+            print("\nAlgorithm's move:")
+            self._board = self.find_best_move(self._board, depth, False)
 
             if self.game_over(self._board):
                 print("Algorithm won!")
