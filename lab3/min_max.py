@@ -89,36 +89,34 @@ class TicTacToe(Solver):
 
     def min_max(self, position, depth, maximizingPlayer):
         if depth == 0 or self.game_over(position):
-            return self.eval(position, depth, maximizingPlayer)
+            return (self.eval(position, depth, maximizingPlayer), position)
 
         if maximizingPlayer:
             max_value = float('-inf')
+            max_pos = []
             for i in range(len(position)):
                 for j in range(len(position[0])):
                     if position[i][j] == 0:
                         new_pos = copy.deepcopy(position)
                         new_pos[i][j] = 'x'
-                        value = self.min_max(new_pos, depth - 1, False)
+                        value = self.min_max(new_pos, depth - 1, False)[0]
                         if value > max_value:
                             max_value = value
-                            max_move = new_pos
-            # print(f"Max value at depth {depth} with eval {max_value} after x moved: ")
-            # self.print_board(max_move)
-            return max_value
+                            max_pos = new_pos
+            return (max_value, max_pos)
         else:
             min_value = float('inf')
+            min_pos = []
             for i in range(len(position)):
                 for j in range(len(position[0])):
                     if position[i][j] == 0:
                         new_pos = copy.deepcopy(position)
                         new_pos[i][j] = 'o'
-                        value = self.min_max(new_pos, depth - 1, True)
+                        value = self.min_max(new_pos, depth - 1, True)[0]
                         if value < min_value:
                             min_value = value
-                            min_move = new_pos
-            # print(f"Min value at depth {depth} with eval {min_value} after x moved: ")
-            # self.print_board(min_move)
-            return min_value
+                            min_pos = new_pos
+            return (min_value, min_pos)
 
     def play(self, depth):
         while not self.game_over(self._board):
@@ -138,7 +136,7 @@ class TicTacToe(Solver):
 
             # Algorithm's move
             print(f"\nAlgorithm's move:")
-            self.min_max(self._board, depth, False)
+            self._board = self.min_max(self._board, depth, False)[1]
 
             if self.game_over(self._board):
                 print("Algorithm won!")
