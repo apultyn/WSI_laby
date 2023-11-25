@@ -1,7 +1,7 @@
 from min_max import TicTacToe
 
 
-def test_board_3():
+def test_board():
     game = TicTacToe(3)
     assert game._board == [
         [0, 0, 0],
@@ -10,18 +10,7 @@ def test_board_3():
     ]
 
 
-def test_board_5():
-    game = TicTacToe(5)
-    assert game._board == [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0]
-    ]
-
-
-def test_game_over_3_blank():
+def test_game_over_blank():
     game = TicTacToe(3)
     game._board = [
         [0, 0, 0],
@@ -31,7 +20,7 @@ def test_game_over_3_blank():
     assert game.game_over() is False
 
 
-def test_game_over_3_full_false():
+def test_game_over_full_false():
     game = TicTacToe(3)
     game._board = [
         ['x', 'x', 'o'],
@@ -41,7 +30,7 @@ def test_game_over_3_full_false():
     assert game.game_over() is False
 
 
-def test_game_over_3_some_false():
+def test_game_over_some_false():
     game = TicTacToe(3)
     game._board = [
         ['x', 0, 'o'],
@@ -51,7 +40,7 @@ def test_game_over_3_some_false():
     assert game.game_over() is False
 
 
-def test_game_over_3_horizontal_true():
+def test_game_over_horizontal_true():
     game = TicTacToe(3)
     game._board = [
         ['x', 'x', 'x'],
@@ -61,7 +50,7 @@ def test_game_over_3_horizontal_true():
     assert game.game_over() is True
 
 
-def test_game_over_3_vertical_true():
+def test_game_over_vertical_true():
     game = TicTacToe(3)
     game._board = [
         [0, 'o', 0],
@@ -71,7 +60,7 @@ def test_game_over_3_vertical_true():
     assert game.game_over() is True
 
 
-def test_game_over_3_diagonal_true():
+def test_game_over_diagonal_true():
     game = TicTacToe(3)
     game._board = [
         [0, 0, 'x'],
