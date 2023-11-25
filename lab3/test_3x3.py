@@ -17,7 +17,7 @@ def test_game_over_blank():
         [0, 0, 0],
         [0, 0, 0]
     ]
-    assert game.game_over() is False
+    assert game.game_over(game._board) is False
 
 
 def test_game_over_full_false():
@@ -27,7 +27,7 @@ def test_game_over_full_false():
         ['o', 'o', 'x'],
         ['x', 'o', 'x']
     ]
-    assert game.game_over() is False
+    assert game.game_over(game._board) is False
 
 
 def test_game_over_some_false():
@@ -37,7 +37,7 @@ def test_game_over_some_false():
         [0, 'o', 'x'],
         [0, 'o', 0]
     ]
-    assert game.game_over() is False
+    assert game.game_over(game._board) is False
 
 
 def test_game_over_horizontal_true():
@@ -47,7 +47,7 @@ def test_game_over_horizontal_true():
         [0, 0, 0],
         [0, 0, 0]
     ]
-    assert game.game_over() is True
+    assert game.game_over(game._board) is True
 
 
 def test_game_over_vertical_true():
@@ -57,7 +57,7 @@ def test_game_over_vertical_true():
         [0, 'o', 0],
         [0, 'o', 0]
     ]
-    assert game.game_over() is True
+    assert game.game_over(game._board) is True
 
 
 def test_game_over_diagonal_true():
@@ -67,4 +67,4 @@ def test_game_over_diagonal_true():
         [0, 'x', 0],
         ['x', 0, 0]
     ]
-    assert game.game_over() is True
+    assert game.game_over(game._board) is True
