@@ -2,7 +2,7 @@ from min_max import TicTacToe
 
 
 def main():
-    game = TicTacToe(10)
+    game = TicTacToe(4)
     game.print_board()
 
 
