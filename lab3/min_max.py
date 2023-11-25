@@ -78,12 +78,18 @@ class TicTacToe(Solver):
 
         return False
 
-    def eval(self, position, depth):
-        return 0
+    def eval(self, position, depth, maximizingPlayer):
+        if self.game_over(position):
+            if maximizingPlayer:
+                return -10 + depth
+            else:
+                return 10 - depth
+        else:
+            return 0
 
     def min_max(self, position, depth, maximizingPlayer):
         if depth == 0 or self.game_over(position):
-            return self.eval(position, depth)
+            return self.eval(position, depth, maximizingPlayer)
 
         if maximizingPlayer:
             max_value = float('-inf')
@@ -92,10 +98,12 @@ class TicTacToe(Solver):
                     if position[i][j] == 0:
                         new_pos = copy.deepcopy(position)
                         new_pos[i][j] = 'x'
-                        print(f"Pos at {depth} after x moved: ")
-                        self.print_board(new_pos)
                         value = self.min_max(new_pos, depth - 1, False)
-                        max_value = max(max_value, value)
+                        if value > max_value:
+                            max_value = value
+                            max_move = new_pos
+            # print(f"Max value at depth {depth} with eval {max_value} after x moved: ")
+            # self.print_board(max_move)
             return max_value
         else:
             min_value = float('inf')
@@ -104,11 +112,39 @@ class TicTacToe(Solver):
                     if position[i][j] == 0:
                         new_pos = copy.deepcopy(position)
                         new_pos[i][j] = 'o'
-                        print(f"Pos at {depth} after o moved: ")
-                        self.print_board(new_pos)
                         value = self.min_max(new_pos, depth - 1, True)
-                        min_value = min(min_value, value)
+                        if value < min_value:
+                            min_value = value
+                            min_move = new_pos
+            # print(f"Min value at depth {depth} with eval {min_value} after x moved: ")
+            # self.print_board(min_move)
             return min_value
+
+    def play(self, depth):
+        while not self.game_over(self._board):
+            # Player's move
+            self.print_board(self._board)
+            print("Your move (enter row and column separated by space): ")
+            row, col = map(int, input().split())
+            if self._board[row][col] == 0:
+                self._board[row][col] = 'x'
+            else:
+                print("Invalid move. Try again.")
+                continue
+
+            if self.game_over(self._board):
+                print("You won!")
+                break
+
+            # Algorithm's move
+            print(f"\nAlgorithm's move:")
+            self.min_max(self._board, depth, False)
+
+            if self.game_over(self._board):
+                print("Algorithm won!")
+                break
+
+        self.print_board(self._board)
 
     def get_parameters(self):
         pass

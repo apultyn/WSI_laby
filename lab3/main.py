@@ -3,7 +3,7 @@ from min_max import TicTacToe
 
 def main():
     game = TicTacToe(3)
-    game.min_max(game._board, 2, True)
+    game.play(depth=3)
 
 
 if __name__ == "__main__":
