@@ -1,4 +1,5 @@
 import copy
+import numpy as np
 
 
 class TicTacToe3x3:
@@ -9,27 +10,35 @@ class TicTacToe3x3:
             ['_', '_', '_']
         ]
 
-    def eval(self, position, maxPlayer):
+    def game_over(self, position):
+        return (
+            self.check_vert(position) or
+            self.check_hori(position) or
+            self.check_diag(position) or
+            self.get_moves(position) == []
+        )
+
+    def eval(self, position, depth, maxPlayer):
         if (
             self.check_vert(position) or
             self.check_hori(position) or
             self.check_diag(position)
         ):
             if maxPlayer:
-                return -1
+                return -10 - depth
             else:
-                return 1
+                return 10 + depth
         return 0
 
     def check_vert(self, position):
-        for row in position:
-            if ((row[0] == row[1] == row[2]) and row[0] != '_'):
+        for i in range(3):
+            if ((position[0][i] == position[1][i] == position[2][i]) and position[0][i] != '_'):
                 return True
         return False
 
     def check_hori(self, position):
-        for i in range(3):
-            if ((position[i][0] == position[i][1] == position[i][2]) and position[i][0] != '_'):
+        for row in position:
+            if ((row[0] == row[1] == row[2]) and row[0] != '_'):
                 return True
         return False
 
@@ -45,20 +54,21 @@ class TicTacToe3x3:
             for j in range(3):
                 if position[i][j] == '_':
                     moves.append((i, j))
+        np.random.shuffle(moves)
         return moves
 
-    def minimax(self, position, maxPlayer):
-        moves = self.get_moves(position)
-        if moves == []:
-            return self.eval(position, maxPlayer)
+    def minimax(self, position, depth, maxPlayer):
+        if self.game_over(position):
+            return self.eval(position, depth, maxPlayer)
 
+        moves = self.get_moves(position)
         if maxPlayer:
             max_eval = float('-inf')
             for move in moves:
                 new_pos = copy.deepcopy(position)
                 new_pos[move[0]][move[1]] = 'x'
 
-                eval = self.minimax(new_pos, False)
+                eval = self.minimax(new_pos, depth - 1, False)
                 max_eval = max(max_eval, eval)
             return max_eval
         else:
@@ -67,15 +77,12 @@ class TicTacToe3x3:
                 new_pos = copy.deepcopy(position)
                 new_pos[move[0]][move[1]] = 'o'
 
-                eval = self.minimax(new_pos, True)
+                eval = self.minimax(new_pos, depth - 1, True)
                 min_eval = min(min_eval, eval)
             return min_eval
 
-    def find_best_move(self, position, maxPlayer):
+    def find_best_move(self, position, depth, maxPlayer):
         moves = self.get_moves(position)
-        if moves == []:
-            return None
-
         best_pos = []
         if maxPlayer:
             max_eval = float('-inf')
@@ -83,7 +90,7 @@ class TicTacToe3x3:
                 new_pos = copy.deepcopy(position)
                 new_pos[move[0]][move[1]] = 'x'
 
-                eval = self.minimax(new_pos, False)
+                eval = self.minimax(new_pos, depth - 1, False)
                 if eval > max_eval:
                     max_eval = eval
                     best_pos = new_pos
@@ -93,7 +100,7 @@ class TicTacToe3x3:
                 new_pos = copy.deepcopy(position)
                 new_pos[move[0]][move[1]] = 'o'
 
-                eval = self.minimax(new_pos, True)
+                eval = self.minimax(new_pos, depth - 1, True)
                 if eval < min_eval:
                     min_eval = eval
                     best_pos = new_pos
@@ -105,7 +112,9 @@ class TicTacToe3x3:
                 print(f"{square} ", end="")
             print()
 
-    def play(self):
+    def play(self, depth):
+        if depth > 8:
+            depth = 8
         while not self.get_moves(self.board) == []:
             self.print_board()
             answer = input("Your move: ")
@@ -118,19 +127,24 @@ class TicTacToe3x3:
                 print("Invalid move. Try again.")
                 continue
 
-            if self.eval(self.board, False) == -1:
-                print("You won!")
-                break
+            depth -= 1
+
+            if self.game_over(self.board):
+                result = self.eval(self.board, depth, False)
+                if result > 0:
+                    print("You won!")
+                    break
+                elif result == 0:
+                    print("Draw!")
+                    break
 
             print("Algorithm's move:")
-            self.board = self.find_best_move(self.board, False)
+            self.board = self.find_best_move(self.board, depth, False)
+            depth -= 1
 
-            if self.board is None:
-                print("Draw")
-                break
-
-            if self.eval(self.board, True) == 1:
-                print("Algorithm won!")
-                break
+            if self.game_over(self.board):
+                if self.eval(self.board, depth, True) < 0:
+                    print("Algorithm won!")
+                    break
 
         self.print_board()
