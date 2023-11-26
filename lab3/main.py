@@ -3,7 +3,7 @@ from TicTacToe import TicTacToe
 
 def main():
     game = TicTacToe()
-    game.play(depth=10)
+    game.play_yourself(depth=2)
 
 
 if __name__ == "__main__":

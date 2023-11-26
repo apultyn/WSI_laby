@@ -82,6 +82,10 @@ class TicTacToe:
             return min_eval
 
     def find_best_move(self, position, depth, maxPlayer):
+        if depth > 8:
+            depth = 8
+        if depth < 1:
+            depth = 1
         best_move = None
         moves = self.get_moves(position)
 
@@ -113,9 +117,7 @@ class TicTacToe:
                 print(f"{square} ", end="")
             print()
 
-    def play(self, depth):
-        if depth > 8:
-            depth = 8
+    def play_yourself(self, depth):
         while not self.get_moves(self.board) == []:
             self.print_board()
             answer = input("Your move: ")
@@ -128,8 +130,6 @@ class TicTacToe:
                 print("Invalid move. Try again.")
                 continue
 
-            depth -= 1
-
             if self.game_over(self.board):
                 result = self.eval(self.board, depth, False)
                 if result > 0:
@@ -141,7 +141,6 @@ class TicTacToe:
 
             print("Algorithm's move:")
             self.board = self.find_best_move(self.board, depth, False)
-            depth -= 1
 
             if self.game_over(self.board):
                 if self.eval(self.board, depth, True) < 0:
@@ -149,3 +148,6 @@ class TicTacToe:
                     break
 
         self.print_board()
+
+    def play_random(self, depth):
+        pass
