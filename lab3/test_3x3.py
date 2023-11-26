@@ -17,7 +17,7 @@ def test_game_over_blank():
         ['_', '_', '_'],
         ['_', '_', '_']
     ]
-    assert game.game_over(game._board) is False
+    assert game.game_won(game._board) is False
 
 
 def test_game_over_full_false():
@@ -27,7 +27,7 @@ def test_game_over_full_false():
         ['o', 'o', 'x'],
         ['x', 'o', 'x']
     ]
-    assert game.game_over(game._board) is False
+    assert game.game_won(game._board) is False
 
 
 def test_game_over_some_false():
@@ -37,7 +37,7 @@ def test_game_over_some_false():
         ['_', 'o', 'x'],
         ['_', 'o', '_']
     ]
-    assert game.game_over(game._board) is False
+    assert game.game_won(game._board) is False
 
 
 def test_game_over_horizontal_true():
@@ -47,7 +47,7 @@ def test_game_over_horizontal_true():
         ['_', '_', '_'],
         ['_', '_', '_']
     ]
-    assert game.game_over(game._board) is True
+    assert game.game_won(game._board) is True
 
 
 def test_game_over_vertical_true():
@@ -57,7 +57,7 @@ def test_game_over_vertical_true():
         ['_', 'o', '_'],
         ['_', 'o', '_']
     ]
-    assert game.game_over(game._board) is True
+    assert game.game_won(game._board) is True
 
 
 def test_game_over_diagonal_true():
@@ -67,4 +67,21 @@ def test_game_over_diagonal_true():
         ['_', 'x', '_'],
         ['x', '_', '_']
     ]
-    assert game.game_over(game._board) is True
+    assert game.game_won(game._board) is True
+
+
+def test_moves():
+    game = TicTacToe(3)
+    game._board = [
+        ['_', '_', 'x'],
+        ['_', 'x', '_'],
+        ['x', '_', '_']
+    ]
+    assert game.get_moves(game._board) == [
+        (0, 0),
+        (0, 1),
+        (1, 0),
+        (1, 2),
+        (2, 1),
+        (2, 2)
+    ]

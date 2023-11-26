@@ -1,4 +1,5 @@
 from solver import Solver
+import numpy as np
 import copy
 
 
@@ -19,7 +20,7 @@ class TicTacToe(Solver):
                 print(f"{square} ", end="")
             print()
 
-    def game_over(self, board):
+    def game_won(self, board):
         return (
             self.check_rows(board) or
             self.check_columns(board) or
@@ -78,8 +79,17 @@ class TicTacToe(Solver):
 
         return False
 
+    def get_moves(self, position):
+        moves = []
+        for i in range(len(position)):
+            for j in range(len(position[0])):
+                if position[i][j] == '_':
+                    moves.append((i, j))
+        np.random.shuffle(moves)
+        return moves
+
     def eval(self, position, depth, maximizingPlayer):
-        if self.game_over(position):
+        if self.game_won(position):
             if maximizingPlayer:
                 return -(len(self._board) * len(self._board)) + depth
             else:
@@ -88,63 +98,59 @@ class TicTacToe(Solver):
             return 0
 
     def min_max(self, position, depth, maximizingPlayer):
-        if depth == 0 or self.game_over(position):
+        if (depth == 0 or self.game_won(position) or self.get_moves(position) == []):
             return self.eval(position, depth, maximizingPlayer)
 
         if maximizingPlayer:
-            max_value = float('-inf')
-            for i in range(len(position)):
-                for j in range(len(position[0])):
-                    if position[i][j] == '_':
-                        new_pos = copy.deepcopy(position)
-                        new_pos[i][j] = 'x'
-                        max_value = max(max_value,
-                                        self.min_max(new_pos, depth - 1, False))
-            return max_value
+            max_val = float('-inf')
+            moves = self.get_moves(position)
+            for move in moves:
+                new_pos = copy.deepcopy(position)
+                new_pos[move[0]][move[1]] = 'x'
+
+                max_val = max(max_val, self.min_max(new_pos, depth - 1, False))
+            return max_val
         else:
-            min_value = float('inf')
-            for i in range(len(position)):
-                for j in range(len(position[0])):
-                    if position[i][j] == '_':
-                        new_pos = copy.deepcopy(position)
-                        new_pos[i][j] = 'o'
-                        min_value = min(min_value,
-                                        self.min_max(new_pos, depth - 1, True))
-            return min_value
+            min_val = float('inf')
+            moves = self.get_moves(position)
+            for move in moves:
+                new_pos = copy.deepcopy(position)
+                new_pos[move[0]][move[1]] = 'o'
+
+                min_val = min(min_val, self.min_max(new_pos, depth - 1, True))
+            return min_val
 
     def find_best_move(self, position, depth, maximizingPlayer):
-        best_move = []
+        best_move = None
+        moves = self.get_moves(position)
+        if moves == []:
+            return None
+
         if maximizingPlayer:
-            max_value = float('-inf')
-            for i in range(len(position)):
-                for j in range(len(position[0])):
-                    if position[i][j] == '_':
-                        new_pos = copy.deepcopy(position)
-                        new_pos[i][j] = 'x'
-                        value = self.min_max(new_pos, depth, False)
+            max_val = float('-inf')
+            for move in moves:
+                new_pos = copy.deepcopy(position)
+                new_pos[move[0]][move[1]] = 'x'
 
-                        if value > max_value:
-                            max_value = value
-                            best_move = new_pos
+                move_val = self.min_max(new_pos, depth - 1, False)
+                if move_val > max_val:
+                    best_move = new_pos
+                    max_val = move_val
         else:
-            min_value = float('inf')
-            for i in range(len(position)):
-                for j in range(len(position[0])):
-                    if position[i][j] == '_':
-                        new_pos = copy.deepcopy(position)
-                        new_pos[i][j] = 'o'
-                        value = self.min_max(new_pos, depth, True)
+            min_val = float('inf')
+            for move in moves:
+                new_pos = copy.deepcopy(position)
+                new_pos[move[0]][move[1]] = 'o'
 
-                        if value < min_value:
-                            min_value = value
-                            best_move = new_pos
+                move_val = self.min_max(new_pos, depth - 1, True)
+                if move_val < min_val:
+                    best_move = new_pos
+                    min_val = move_val
         return best_move
 
     def play(self, depth):
-        while not self.game_over(self._board):
-            # Player's move
+        while not (self.game_won(self._board) or self.get_moves(self._board) == []):
             self.print_board(self._board)
-            print("Your move (enter row and column separated by space): ")
             row, col = map(int, input().split())
             if self._board[row][col] == '_':
                 self._board[row][col] = 'x'
@@ -152,7 +158,7 @@ class TicTacToe(Solver):
                 print("Invalid move. Try again.")
                 continue
 
-            if self.game_over(self._board):
+            if self.game_won(self._board):
                 print("You won!")
                 break
 
@@ -160,7 +166,11 @@ class TicTacToe(Solver):
             print("\nAlgorithm's move:")
             self._board = self.find_best_move(self._board, depth, False)
 
-            if self.game_over(self._board):
+            if self._board is None:
+                print("Draw")
+                break
+
+            if self.game_won(self._board):
                 print("Algorithm won!")
                 break
 

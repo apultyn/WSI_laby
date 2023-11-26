@@ -21,7 +21,7 @@ def test_game_over_blank():
         ['_', '_', '_', '_', '_'],
         ['_', '_', '_', '_', '_']
     ]
-    assert game.game_over(game._board) is False
+    assert game.game_won(game._board) is False
 
 
 def test_game_over_full_false():
@@ -33,7 +33,7 @@ def test_game_over_full_false():
         ['x', 'o', 'x', 'o', 'x'],
         ['o', 'x', 'x', 'o', 'o']
     ]
-    assert game.game_over(game._board) is False
+    assert game.game_won(game._board) is False
 
 
 def test_game_over_some_false():
@@ -45,7 +45,7 @@ def test_game_over_some_false():
         ['x', '_', 'x', '_', 'x'],
         ['o', 'x', 'x', 'o', 'o']
     ]
-    assert game.game_over(game._board) is False
+    assert game.game_won(game._board) is False
 
 
 def test_game_over_horizontal_true():
@@ -57,7 +57,7 @@ def test_game_over_horizontal_true():
         ['_', '_', '_', '_', '_'],
         ['o', 'o', 'o', 'o', '_']
     ]
-    assert game.game_over(game._board) is True
+    assert game.game_won(game._board) is True
 
 
 def test_game_over_vertical_true():
@@ -69,7 +69,7 @@ def test_game_over_vertical_true():
         ['_', '_', '_', '_', 'o'],
         ['_', '_', '_', '_', '_']
     ]
-    assert game.game_over(game._board) is True
+    assert game.game_won(game._board) is True
 
 
 def test_game_over_diagonal_true():
@@ -81,7 +81,7 @@ def test_game_over_diagonal_true():
         ['_', '_', '_', '_', 'x'],
         ['_', '_', '_', '_', '_']
     ]
-    assert game.game_over(game._board) is True
+    assert game.game_won(game._board) is True
 
 
 def test_game_over_full_true():
@@ -93,7 +93,7 @@ def test_game_over_full_true():
         ['x', 'o', 'x', 'x', 'x'],
         ['o', 'x', 'x', 'o', 'o']
     ]
-    assert game.game_over(game._board) is True
+    assert game.game_won(game._board) is True
 
 
 def test_game_over_some_true():
@@ -105,4 +105,4 @@ def test_game_over_some_true():
         ['x', '_', 'x', 'x', 'x'],
         ['o', 'x', 'x', 'o', 'o']
     ]
-    assert game.game_over(game._board) is True
+    assert game.game_won(game._board) is True
