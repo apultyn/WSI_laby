@@ -149,5 +149,50 @@ class TicTacToe:
 
         self.print_board()
 
-    def play_random(self, depth):
-        pass
+    def play_with_random_bot(self, min_max_x, depth):
+        if min_max_x:
+            while not self.get_moves(self.board) == []:
+                self.board = self.find_best_move(self.board, depth, True)
+
+                if self.game_over(self.board):
+                    result = self.eval(self.board, depth, False)
+                    if result > 0:
+                        self.print_board()
+                        return 1
+                    elif result == 0:
+                        self.print_board()
+                        return 0
+
+                moves = self.get_moves(self.board)
+                move = moves[np.random.randint(0, len(moves))]
+                row = move[0]
+                col = move[1]
+                self.board[row][col] = 'o'
+
+                if self.game_over(self.board):
+                    if self.eval(self.board, depth, True) < 0:
+                        self.print_board()
+                        return -1
+        else:
+            while not self.get_moves(self.board) == []:
+                moves = self.get_moves(self.board)
+                move = moves[np.random.randint(0, len(moves))]
+                row = move[0]
+                col = move[1]
+                self.board[row][col] = 'x'
+
+                if self.game_over(self.board):
+                    result = self.eval(self.board, depth, False)
+                    if result > 0:
+                        self.print_board()
+                        return -1
+                    elif result == 0:
+                        self.print_board()
+                        return 0
+
+                self.board = self.find_best_move(self.board, depth, False)
+
+                if self.game_over(self.board):
+                    if self.eval(self.board, depth, True) < 0:
+                        self.print_board()
+                        return 1
