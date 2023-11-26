@@ -2,7 +2,7 @@ import copy
 import numpy as np
 
 
-class TicTacToe3x3:
+class TicTacToe:
     def __init__(self):
         self.board = [
             ['_', '_', '_'],
