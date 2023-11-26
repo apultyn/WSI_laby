@@ -58,7 +58,7 @@ class TicTacToe3x3:
         return moves
 
     def minimax(self, position, depth, maxPlayer):
-        if self.game_over(position):
+        if self.game_over(position) or depth == 0:
             return self.eval(position, depth, maxPlayer)
 
         moves = self.get_moves(position)
@@ -82,8 +82,9 @@ class TicTacToe3x3:
             return min_eval
 
     def find_best_move(self, position, depth, maxPlayer):
+        best_move = None
         moves = self.get_moves(position)
-        best_pos = []
+
         if maxPlayer:
             max_eval = float('-inf')
             for move in moves:
@@ -93,7 +94,7 @@ class TicTacToe3x3:
                 eval = self.minimax(new_pos, depth - 1, False)
                 if eval > max_eval:
                     max_eval = eval
-                    best_pos = new_pos
+                    best_move = new_pos
         else:
             min_eval = float('inf')
             for move in moves:
@@ -103,8 +104,8 @@ class TicTacToe3x3:
                 eval = self.minimax(new_pos, depth - 1, True)
                 if eval < min_eval:
                     min_eval = eval
-                    best_pos = new_pos
-        return best_pos
+                    best_move = new_pos
+        return best_move
 
     def print_board(self):
         for row in self.board:

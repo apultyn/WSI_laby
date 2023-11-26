@@ -7,6 +7,7 @@ class TicTacToe(Solver):
     def __init__(self, size):
         if size < 3:
             raise ValueError("Board can't be smaller than 3x3")
+        self._size = size
         self._board = []
         for _ in range(size):
             row = []
@@ -14,18 +15,19 @@ class TicTacToe(Solver):
                 row.append('_')
             self._board.append(row)
 
-    def print_board(self, board):
-        for row in board:
+    def print_board(self):
+        for row in self._board:
             for square in row:
                 print(f"{square} ", end="")
             print()
 
-    def game_won(self, board):
+    def game_over(self, board):
         return (
             self.check_rows(board) or
             self.check_columns(board) or
             self.check_diagonals(board) or
-            self.check_four_in_a_row(board)
+            self.check_four_in_a_row(board) or
+            self.get_moves(board) == []
         )
 
     def check_rows(self, board):
@@ -89,16 +91,21 @@ class TicTacToe(Solver):
         return moves
 
     def eval(self, position, depth, maximizingPlayer):
-        if self.game_won(position):
+        if (
+            self.check_columns(position) or
+            self.check_rows(position) or
+            self.check_diagonals(position) or
+            self.check_four_in_a_row(position)
+        ):
             if maximizingPlayer:
-                return -(len(self._board) * len(self._board)) + depth
+                return -(self._size ** 2) - depth
             else:
-                return (len(self._board) * len(self._board)) - depth
+                return (self._size ** 2) + depth
         else:
             return 0
 
     def min_max(self, position, depth, maximizingPlayer):
-        if (depth == 0 or self.game_won(position) or self.get_moves(position) == []):
+        if self.game_over(position) or depth == 0:
             return self.eval(position, depth, maximizingPlayer)
 
         if maximizingPlayer:
@@ -123,8 +130,6 @@ class TicTacToe(Solver):
     def find_best_move(self, position, depth, maximizingPlayer):
         best_move = None
         moves = self.get_moves(position)
-        if moves == []:
-            return None
 
         if maximizingPlayer:
             max_val = float('-inf')
@@ -149,32 +154,42 @@ class TicTacToe(Solver):
         return best_move
 
     def play(self, depth):
-        while not (self.game_won(self._board) or self.get_moves(self._board) == []):
-            self.print_board(self._board)
-            row, col = map(int, input().split())
+        if depth > (self._size ** 2) - 1:
+            depth = (self._size ** 2) - 1
+
+        while not self.get_moves(self._board) == []:
+            self.print_board()
+            answer = input("Your move: ")
+            row = int(answer[0])
+            col = int(answer[2])
+
             if self._board[row][col] == '_':
                 self._board[row][col] = 'x'
             else:
                 print("Invalid move. Try again.")
                 continue
 
-            if self.game_won(self._board):
-                print("You won!")
-                break
+            depth -= 1
 
-            # Algorithm's move
-            print("\nAlgorithm's move:")
+            if self.game_over(self._board):
+                result = self.eval(self._board, depth, False)
+                if result > 0:
+                    print("You won!")
+                    break
+                elif result == 0:
+                    print("Draw!")
+                    break
+
+            print("Algorithm's move:")
             self._board = self.find_best_move(self._board, depth, False)
+            depth -= 1
 
-            if self._board is None:
-                print("Draw")
-                break
+            if self.game_over(self._board):
+                if self.eval(self._board, depth, True) < 0:
+                    print("Algorithm won!")
+                    break
 
-            if self.game_won(self._board):
-                print("Algorithm won!")
-                break
-
-        self.print_board(self._board)
+        self.print_board()
 
     def get_parameters(self):
         pass
