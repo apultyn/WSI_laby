@@ -32,7 +32,10 @@ class TicTacToe:
 
     def check_vert(self, position):
         for i in range(3):
-            if ((position[0][i] == position[1][i] == position[2][i]) and position[0][i] != '_'):
+            if (
+                position[0][i] == position[1][i] == position[2][i] and
+                position[0][i] != '_'
+            ):
                 return True
         return False
 
@@ -44,8 +47,10 @@ class TicTacToe:
 
     def check_diag(self, position):
         return (
-            ((position[0][0] == position[1][1] == position[2][2]) or
-             (position[0][2] == position[1][1] == position[2][0])) and (position[1][1] != '_')
+            (
+                (position[0][0] == position[1][1] == position[2][2]) or
+                (position[0][2] == position[1][1] == position[2][0])
+            ) and (position[1][1] != '_')
         )
 
     def get_moves(self, position):
@@ -117,37 +122,73 @@ class TicTacToe:
                 print(f"{square} ", end="")
             print()
 
-    def play_yourself(self, depth):
-        while not self.get_moves(self.board) == []:
+    def play_yourself(self, min_max_as_x, depth):
+        if min_max_as_x:
+            while not self.get_moves(self.board) == []:
+                print("Algorithm's move:")
+                self.board = self.find_best_move(self.board, depth, True)
+
+                if self.game_over(self.board):
+                    result = self.eval(self.board, depth, False)
+                    if result > 0:
+                        print("Algorithm won!")
+                        break
+                    elif result == 0:
+                        print("Draw!")
+                        break
+
+                self.print_board()
+                answer = input("Your move: ")
+                row = int(answer[0])
+                col = int(answer[2])
+
+                if self.board[row][col] == '_':
+                    self.board[row][col] = 'o'
+                else:
+                    while self.board[row][col] != '_':
+                        print("Invalid move. Try again.")
+                        self.print_board()
+                        answer = input("Your move: ")
+                        row = int(answer[0])
+                        col = int(answer[2])
+                    self.board[row][col] = 'o'
+
+                if self.game_over(self.board):
+                    if self.eval(self.board, depth, True) < 0:
+                        print("You won!")
+                        break
             self.print_board()
-            answer = input("Your move: ")
-            row = int(answer[0])
-            col = int(answer[2])
+        else:
+            while not self.get_moves(self.board) == []:
+                self.print_board()
+                answer = input("Your move: ")
+                row = int(answer[0])
+                col = int(answer[2])
 
-            if self.board[row][col] == '_':
-                self.board[row][col] = 'x'
-            else:
-                print("Invalid move. Try again.")
-                continue
+                if self.board[row][col] == '_':
+                    self.board[row][col] = 'x'
+                else:
+                    print("Invalid move. Try again.")
+                    continue
 
-            if self.game_over(self.board):
-                result = self.eval(self.board, depth, False)
-                if result > 0:
-                    print("You won!")
-                    break
-                elif result == 0:
-                    print("Draw!")
-                    break
+                if self.game_over(self.board):
+                    result = self.eval(self.board, depth, False)
+                    if result > 0:
+                        print("You won!")
+                        break
+                    elif result == 0:
+                        print("Draw!")
+                        break
 
-            print("Algorithm's move:")
-            self.board = self.find_best_move(self.board, depth, False)
+                print("Algorithm's move:")
+                self.board = self.find_best_move(self.board, depth, False)
 
-            if self.game_over(self.board):
-                if self.eval(self.board, depth, True) < 0:
-                    print("Algorithm won!")
-                    break
+                if self.game_over(self.board):
+                    if self.eval(self.board, depth, True) < 0:
+                        print("Algorithm won!")
+                        break
 
-        self.print_board()
+            self.print_board()
 
     def play_with_random_bot(self, min_max_x, depth, print_board):
         if min_max_x:
