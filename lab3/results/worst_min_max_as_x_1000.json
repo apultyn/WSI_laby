@@ -1,0 +1,17 @@
+{
+    "params": {
+        "iter": 1000,
+        "min_max_as_x": true,
+        "depth": 1,
+        "print_results": false,
+        "test_name": "worst_min_max_as_x_1000"
+    },
+    "results": {
+        "wins": 809,
+        "win_per": 0.81,
+        "lost": 126,
+        "lost_per": 0.13,
+        "draws": 65,
+        "draws_per": 0.07
+    }
+}
