@@ -149,18 +149,19 @@ class TicTacToe:
 
         self.print_board()
 
-    def play_with_random_bot(self, min_max_x, depth):
+    def play_with_random_bot(self, min_max_x, depth, print_board):
         if min_max_x:
             while not self.get_moves(self.board) == []:
                 self.board = self.find_best_move(self.board, depth, True)
-
                 if self.game_over(self.board):
                     result = self.eval(self.board, depth, False)
                     if result > 0:
-                        self.print_board()
+                        if print_board:
+                            self.print_board()
                         return 1
                     elif result == 0:
-                        self.print_board()
+                        if print_board:
+                            self.print_board()
                         return 0
 
                 moves = self.get_moves(self.board)
@@ -171,7 +172,8 @@ class TicTacToe:
 
                 if self.game_over(self.board):
                     if self.eval(self.board, depth, True) < 0:
-                        self.print_board()
+                        if print_board:
+                            self.print_board()
                         return -1
         else:
             while not self.get_moves(self.board) == []:
@@ -184,15 +186,18 @@ class TicTacToe:
                 if self.game_over(self.board):
                     result = self.eval(self.board, depth, False)
                     if result > 0:
-                        self.print_board()
+                        if print_board:
+                            self.print_board()
                         return -1
                     elif result == 0:
-                        self.print_board()
+                        if print_board:
+                            self.print_board()
                         return 0
 
                 self.board = self.find_best_move(self.board, depth, False)
 
                 if self.game_over(self.board):
                     if self.eval(self.board, depth, True) < 0:
-                        self.print_board()
+                        if print_board:
+                            self.print_board()
                         return 1
