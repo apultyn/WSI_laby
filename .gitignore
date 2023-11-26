@@ -35,3 +35,5 @@ lib64/
 
 # Project-specified
 tests/
+
+.pytest_cache

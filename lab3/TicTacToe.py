@@ -127,6 +127,7 @@ class TicTacToe:
             while not self.get_moves(self.board) == []:
                 print("Algorithm's move:")
                 self.board = self.find_best_move(self.board, depth, True)
+                self.print_board()
 
                 if self.game_over(self.board):
                     result = self.eval(self.board, depth, False)
@@ -137,7 +138,6 @@ class TicTacToe:
                         print("Draw!")
                         break
 
-                self.print_board()
                 answer = input("Your move: ")
                 row = int(answer[0])
                 col = int(answer[2])
@@ -153,14 +153,15 @@ class TicTacToe:
                         col = int(answer[2])
                     self.board[row][col] = 'o'
 
+                self.print_board()
+
                 if self.game_over(self.board):
                     if self.eval(self.board, depth, True) < 0:
                         print("You won!")
                         break
-            self.print_board()
         else:
+            self.print_board()
             while not self.get_moves(self.board) == []:
-                self.print_board()
                 answer = input("Your move: ")
                 row = int(answer[0])
                 col = int(answer[2])
@@ -170,6 +171,8 @@ class TicTacToe:
                 else:
                     print("Invalid move. Try again.")
                     continue
+
+                self.print_board()
 
                 if self.game_over(self.board):
                     result = self.eval(self.board, depth, False)
@@ -182,13 +185,12 @@ class TicTacToe:
 
                 print("Algorithm's move:")
                 self.board = self.find_best_move(self.board, depth, False)
+                self.print_board()
 
                 if self.game_over(self.board):
                     if self.eval(self.board, depth, True) < 0:
                         print("Algorithm won!")
                         break
-
-            self.print_board()
 
     def play_with_random_bot(self, min_max_x, depth, print_board):
         if min_max_x:
