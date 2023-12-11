@@ -1,0 +1,10 @@
+Epoch: 0  Train_time: 138.68077158927917 Accuracy: 53.54
+Epoch: 1  Train_time: 285.84905767440796 Accuracy: 67.52
+Epoch: 2  Train_time: 436.0438735485077 Accuracy: 73.28
+Epoch: 3  Train_time: 577.8672304153442 Accuracy: 76.94
+Epoch: 4  Train_time: 719.2059416770935 Accuracy: 78.97999999999999
+Epoch: 5  Train_time: 857.7028865814209 Accuracy: 79.97999999999999
+Epoch: 6  Train_time: 997.6762509346008 Accuracy: 80.64
+Epoch: 7  Train_time: 1138.2928411960602 Accuracy: 81.36
+Epoch: 8  Train_time: 1279.1634917259216 Accuracy: 81.57
+Epoch: 9  Train_time: 1415.9941232204437 Accuracy: 81.98
