@@ -2,6 +2,9 @@ import numpy as np
 import time
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 class NeuralNetwork:
@@ -103,23 +106,39 @@ class NeuralNetwork:
 def main():
     (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
+    train_images = train_images[:1000]
+    train_labels = train_labels[:1000]
+    test_images = test_images[:100]
+    test_labels = test_labels[:100]
+
     train_images = train_images.reshape((len(train_images), -1)) / 255
     test_images = test_images.reshape((len(test_images), -1)) / 255
 
     train_labels = to_categorical(train_labels)
     test_labels = to_categorical(test_labels)
 
-    # print(len(test_images))
-    # print(len(train_images))
-
-    # print(train_images[0])
-    # print(test_images[0])
-
-    # print(train_labels[0])
-    # print(test_labels[0])
-
-    nn = NeuralNetwork(sizes=[784, 128, 64, 10], epochs=10, learning_rate=0.01)
+    nn = NeuralNetwork(sizes=[784, 128, 64, 10], epochs=5, learning_rate=0.001)
     nn.train(train_images, train_labels, test_images, test_labels)
+
+    predictions = []
+    for i in range(len(test_images)):
+        output = nn.forward_pass(test_images[i])
+        pred = np.argmax(output)
+        predictions.append(pred)
+
+    # Convert one-hot encoded labels back to integer labels
+    true_labels = np.argmax(test_labels, axis=1)
+
+    # Generate confusion matrix
+    cm = confusion_matrix(true_labels, predictions)
+
+    # Plot and save confusion matrix
+    plt.figure(figsize=(10, 10))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=np.arange(10), yticklabels=np.arange(10))
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.title("Confusion Matrix")
+    plt.savefig("confusion_matrix.png")
 
 
 if __name__ == "__main__":
