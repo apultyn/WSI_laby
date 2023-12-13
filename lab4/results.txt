@@ -1,5 +1,0 @@
-Epoch: 0  Train_time: 3.9178578853607178 Accuracy: 2.0
-Epoch: 1  Train_time: 2.79205060005188 Accuracy: 2.0
-Epoch: 2  Train_time: 2.7179534435272217 Accuracy: 2.0
-Epoch: 3  Train_time: 2.925961971282959 Accuracy: 1.0
-Epoch: 4  Train_time: 2.876300096511841 Accuracy: 2.0

@@ -68,16 +68,23 @@ class NeuralNetwork:
             self.params[key] -= self.learning_rate * val
 
     def train(self, train_list, train_labels, test_list, test_labels):
-        with open("results.txt", 'w') as file_handle:
-            for epoch in range(self.epochs):
-                start_time = time.time()
-                for i in range(len(train_list)):
-                    output = self.forward_pass(train_list[i])
-                    change_w = self.backward_pass(train_labels[i], output)
-                    self.update_weights(change_w)
-                    print(f"Epoch: {epoch} Image {i}")
-                accuracy = self.compute_accuracy(test_list, test_labels)
-                file_handle.write(f"Epoch: {epoch}  Train_time: {time.time() - start_time} Accuracy: {accuracy * 100}\n")
+        start_time = time.time()
+        accuracies = []
+        for epoch in range(self.epochs):
+            for i in range(len(train_list)):
+                output = self.forward_pass(train_list[i])
+                change_w = self.backward_pass(train_labels[i], output)
+                self.update_weights(change_w)
+                print(f"Epoch: {epoch + 1} Image {i}")
+            accuracy = self.compute_accuracy(test_list, test_labels)
+            accuracies.append(accuracy)
+        print(f"Training time: {time.time() - start_time}")
+        plt.plot(range(1, self.epochs + 1), accuracies, marker='o')
+        plt.xlabel('Epoch')
+        plt.ylabel('Accuracy')
+        plt.title('Accuracy During Training')
+        plt.savefig("results/accuracy.pdf")
+        plt.show()
 
     def compute_accuracy(self, test_list, test_labels):
         predictions = []
@@ -102,14 +109,45 @@ class NeuralNetwork:
         exps = np.exp(x - x.max())
         return exps / np.sum(exps, axis=0) * (1-exps / np.sum(exps, axis=0))
 
+    def confusion_matrix(self, test_images, test_labels):
+        predictions = []
+        for i in range(len(test_images)):
+            output = self.forward_pass(test_images[i])
+            pred = np.argmax(output)
+            predictions.append(pred)
+
+        true_labels = np.argmax(test_labels, axis=1)
+
+        cm = confusion_matrix(true_labels, predictions)
+        cm_percentage = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
+
+        plt.figure(figsize=(15, 6))
+
+        plt.subplot(1, 2, 1)
+        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
+                    xticklabels=np.arange(10), yticklabels=np.arange(9, -1, -1))
+        plt.xlabel("Predicted Label")
+        plt.ylabel("True Label")
+        plt.title("Confusion Matrix (Counts)")
+
+        plt.subplot(1, 2, 2)
+        sns.heatmap(cm_percentage, annot=True, fmt=".2f", cmap="Blues",
+                    xticklabels=np.arange(10), yticklabels=np.arange(9, -1, -1))
+        plt.xlabel("Predicted Label")
+        plt.ylabel("True Label")
+        plt.title("Confusion Matrix (Percentage)")
+
+        plt.tight_layout()
+        plt.savefig("results/confusion_matrix_with_percentage.png")
+
 
 def main():
     (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
-    train_images = train_images[:1000]
-    train_labels = train_labels[:1000]
-    test_images = test_images[:100]
-    test_labels = test_labels[:100]
+    # train_images = train_images[:1000]
+    # train_labels = train_labels[:1000]
+    # test_images = test_images[:100]
+    # test_labels = test_labels[:100]
 
     train_images = train_images.reshape((len(train_images), -1)) / 255
     test_images = test_images.reshape((len(test_images), -1)) / 255
@@ -117,28 +155,9 @@ def main():
     train_labels = to_categorical(train_labels)
     test_labels = to_categorical(test_labels)
 
-    nn = NeuralNetwork(sizes=[784, 128, 64, 10], epochs=5, learning_rate=0.001)
+    nn = NeuralNetwork(sizes=[784, 128, 64, 10], epochs=5, learning_rate=0.1)
     nn.train(train_images, train_labels, test_images, test_labels)
-
-    predictions = []
-    for i in range(len(test_images)):
-        output = nn.forward_pass(test_images[i])
-        pred = np.argmax(output)
-        predictions.append(pred)
-
-    # Convert one-hot encoded labels back to integer labels
-    true_labels = np.argmax(test_labels, axis=1)
-
-    # Generate confusion matrix
-    cm = confusion_matrix(true_labels, predictions)
-
-    # Plot and save confusion matrix
-    plt.figure(figsize=(10, 10))
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=np.arange(10), yticklabels=np.arange(10))
-    plt.xlabel("Predicted Label")
-    plt.ylabel("True Label")
-    plt.title("Confusion Matrix")
-    plt.savefig("confusion_matrix.png")
+    nn.confusion_matrix(test_images, test_labels)
 
 
 if __name__ == "__main__":
