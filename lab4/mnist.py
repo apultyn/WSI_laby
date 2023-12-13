@@ -5,6 +5,8 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import matplotlib.pyplot as plt
+import argparse
+import sys
 
 
 class NeuralNetwork:
@@ -19,12 +21,13 @@ class NeuralNetwork:
         output_layer = sizes[3]
 
         self.params = {
-            "W1": np.random.randn(hidden_1, input_layer) * np.sqrt(1. / hidden_1),
-            "W2": np.random.randn(hidden_2, hidden_1) * np.sqrt(1. / hidden_2),
-            "W3": np.random.randn(output_layer, hidden_2) * np.sqrt(1. / output_layer)
+            "W1": (np.random.randn(hidden_1, input_layer) *
+                   np.sqrt(1. / hidden_1)),
+            "W2": (np.random.randn(hidden_2, hidden_1) *
+                   np.sqrt(1. / hidden_2)),
+            "W3": (np.random.randn(output_layer, hidden_2) *
+                   np.sqrt(1. / output_layer))
         }
-
-        pass
 
     def forward_pass(self, x_train):
         params = self.params
@@ -50,7 +53,8 @@ class NeuralNetwork:
         change_w = {}
 
         # calculate W3 update
-        error = 2 * (output - y_train) / output.shape[0] * self.d_softmax(params["Z3"])
+        error = (2 * (output - y_train) /
+                 output.shape[0] * self.d_softmax(params["Z3"]))
         change_w["W3"] = np.outer(error, params["A2"])
 
         # calculate W2 update
@@ -119,20 +123,23 @@ class NeuralNetwork:
         true_labels = np.argmax(test_labels, axis=1)
 
         cm = confusion_matrix(true_labels, predictions)
-        cm_percentage = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
+        cm_percentage = (cm.astype('float') /
+                         cm.sum(axis=1)[:, np.newaxis] * 100)
 
         plt.figure(figsize=(15, 6))
 
         plt.subplot(1, 2, 1)
         sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
-                    xticklabels=np.arange(10), yticklabels=np.arange(9, -1, -1))
+                    xticklabels=np.arange(10),
+                    yticklabels=np.arange(10))
         plt.xlabel("Predicted Label")
         plt.ylabel("True Label")
         plt.title("Confusion Matrix (Counts)")
 
         plt.subplot(1, 2, 2)
         sns.heatmap(cm_percentage, annot=True, fmt=".2f", cmap="Blues",
-                    xticklabels=np.arange(10), yticklabels=np.arange(9, -1, -1))
+                    xticklabels=np.arange(10),
+                    yticklabels=np.arange(10))
         plt.xlabel("Predicted Label")
         plt.ylabel("True Label")
         plt.title("Confusion Matrix (Percentage)")
@@ -141,8 +148,21 @@ class NeuralNetwork:
         plt.savefig("results/confusion_matrix_with_percentage.png")
 
 
-def main():
-    (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+def main(arguments):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("layer_1_size")
+    parser.add_argument("layer_2_size")
+    parser.add_argument("epochs")
+    parser.add_argument("learning_rate")
+    args = parser.parse_args(arguments[1:])
+
+    layer_1_size = int(args.layer_1_size)
+    layer_2_size = int(args.layer_2_size)
+    epochs = int(args.epochs)
+    learning_rate = float(args.learning_rate)
+
+    ((train_images, train_labels),
+     (test_images, test_labels)) = mnist.load_data()
 
     # train_images = train_images[:1000]
     # train_labels = train_labels[:1000]
@@ -155,10 +175,11 @@ def main():
     train_labels = to_categorical(train_labels)
     test_labels = to_categorical(test_labels)
 
-    nn = NeuralNetwork(sizes=[784, 128, 64, 10], epochs=5, learning_rate=0.1)
+    nn = NeuralNetwork([784, layer_1_size, layer_2_size, 10],
+                       epochs, learning_rate)
     nn.train(train_images, train_labels, test_images, test_labels)
     nn.confusion_matrix(test_images, test_labels)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
