@@ -123,7 +123,8 @@ class NeuralNetwork:
 
         precision = round(tp / fptp, 2) if fptp != 0 else 0
         recall = round(tp / tntp, 2) if tntp != 0 else 0
-        f1_score = round(2 / ((1 / (tp / fptp)) + (1 / (tp / tntp))), 2) if fptp != 0 and tntp != 0 else 0
+        f1_score = (round(2 / ((1 / (tp / fptp)) + (1 / (tp / tntp))), 2)
+                    if fptp != 0 and tntp != 0 else 0)
 
         return {
             "number": number,
@@ -163,16 +164,15 @@ class NeuralNetwork:
         plt.title("Confusion Matrix (Percentage)")
 
         plt.tight_layout()
-        plt.savefig("results/confusion_matrix_with_percentage.png")
+        plt.savefig("results/confusion_matrix.pdf")
 
         dict = []
         matrix = confusion_matrix(true_labels, predictions)
         for i in range(10):
-            dict.append(self.results(cm, i))
-        print(matrix)
-        print(dict)
-
-
+            dict.append(self.results(matrix, i))
+        json_filename = 'results/results.json'
+        with open(json_filename, 'w') as json_file:
+            json.dump(dict, json_file, indent=4)
 
 
 def main(arguments):
@@ -191,10 +191,10 @@ def main(arguments):
     ((train_images, train_labels),
      (test_images, test_labels)) = mnist.load_data()
 
-    train_images = train_images[:1000]
-    train_labels = train_labels[:1000]
-    test_images = test_images[:100]
-    test_labels = test_labels[:100]
+    # train_images = train_images[:1000]
+    # train_labels = train_labels[:1000]
+    # test_images = test_images[:100]
+    # test_labels = test_labels[:100]
 
     train_images = train_images.reshape((len(train_images), -1)) / 255
     test_images = test_images.reshape((len(test_images), -1)) / 255
