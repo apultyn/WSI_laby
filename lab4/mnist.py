@@ -7,6 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import argparse
 import sys
+import json
 
 
 class NeuralNetwork:
@@ -113,6 +114,24 @@ class NeuralNetwork:
         exps = np.exp(x - x.max())
         return exps / np.sum(exps, axis=0) * (1-exps / np.sum(exps, axis=0))
 
+    def results(self, matrix, number):
+        tp = matrix[number][number]
+        fptp = sum(matrix[number])
+        tntp = 0
+        for i in range(10):
+            tntp += matrix[i][number]
+
+        precision = round(tp / fptp, 2) if fptp != 0 else 0
+        recall = round(tp / tntp, 2) if tntp != 0 else 0
+        f1_score = round(2 / ((1 / (tp / fptp)) + (1 / (tp / tntp))), 2) if fptp != 0 and tntp != 0 else 0
+
+        return {
+            "number": number,
+            "precision": precision,
+            "recall": recall,
+            "f1-score": f1_score
+        }
+
     def confusion_matrix(self, test_images, test_labels):
         predictions = []
         for i in range(len(test_images)):
@@ -121,7 +140,6 @@ class NeuralNetwork:
             predictions.append(pred)
 
         true_labels = np.argmax(test_labels, axis=1)
-
         cm = confusion_matrix(true_labels, predictions)
         cm_percentage = (cm.astype('float') /
                          cm.sum(axis=1)[:, np.newaxis] * 100)
@@ -147,6 +165,15 @@ class NeuralNetwork:
         plt.tight_layout()
         plt.savefig("results/confusion_matrix_with_percentage.png")
 
+        dict = []
+        matrix = confusion_matrix(true_labels, predictions)
+        for i in range(10):
+            dict.append(self.results(cm, i))
+        print(matrix)
+        print(dict)
+
+
+
 
 def main(arguments):
     parser = argparse.ArgumentParser()
@@ -164,10 +191,10 @@ def main(arguments):
     ((train_images, train_labels),
      (test_images, test_labels)) = mnist.load_data()
 
-    # train_images = train_images[:1000]
-    # train_labels = train_labels[:1000]
-    # test_images = test_images[:100]
-    # test_labels = test_labels[:100]
+    train_images = train_images[:1000]
+    train_labels = train_labels[:1000]
+    test_images = test_images[:100]
+    test_labels = test_labels[:100]
 
     train_images = train_images.reshape((len(train_images), -1)) / 255
     test_images = test_images.reshape((len(test_images), -1)) / 255
