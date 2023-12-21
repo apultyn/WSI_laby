@@ -97,7 +97,7 @@ class NeuralNetwork:
             output = self.forward_pass(test_list[i])
             pred = np.argmax(output)
             predictions.append(pred == np.argmax(test_labels[i]))
-            print(f"Accuracy for image {i}")
+            print(f"Evaling accuracy - test image {i}")
         return np.mean(predictions)
 
     def sigmoid(self, x):
@@ -139,6 +139,7 @@ class NeuralNetwork:
             output = self.forward_pass(test_images[i])
             pred = np.argmax(output)
             predictions.append(pred)
+            print(f"Creating confusion matrix - image {i} ")
 
         true_labels = np.argmax(test_labels, axis=1)
         cm = confusion_matrix(true_labels, predictions)
@@ -167,9 +168,8 @@ class NeuralNetwork:
         plt.savefig("results/confusion_matrix.pdf")
 
         dict = []
-        matrix = confusion_matrix(true_labels, predictions)
         for i in range(10):
-            dict.append(self.results(matrix, i))
+            dict.append(self.results(cm, i))
         json_filename = 'results/results.json'
         with open(json_filename, 'w') as json_file:
             json.dump(dict, json_file, indent=4)
