@@ -2,6 +2,8 @@ import mnist
 import argparse
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.metrics import confusion_matrix, accuracy_score
 
 
@@ -20,12 +22,15 @@ class SVM:
             self.weights = np.zeros(n_features)
 
         for image in range(n_samples):
-            condition = y_[image] * (np.dot(train_images[image], self.weights) - self.bias) >= 1
+            condition = y_[image] * (
+                np.dot(train_images[image], self.weights) - self.bias) >= 1
             if condition:
-                self.weights -= self.learning_rate * (2 * self.lambda_param * self.weights)
+                self.weights -= self.learning_rate * (
+                    2 * self.lambda_param * self.weights)
             else:
                 self.weights -= self.learning_rate * (
-                    2 * self.lambda_param * self.weights - np.dot(train_images[image], y_[image])
+                    2 * self.lambda_param * self.weights - np.dot(
+                        train_images[image], y_[image])
                 )
                 self.bias -= self.learning_rate * y_[image]
 
@@ -43,6 +48,7 @@ class MulticlassSVM:
               epochs, learning_rate=0.001, lambda_param=0.01):
         unique_classes = np.unique(train_labels)
         svm = None
+        accuracies = []
         for i in range(epochs):
             for class_label in unique_classes:
                 binary_labels = np.where(train_labels == class_label, 1, -1)
@@ -52,7 +58,10 @@ class MulticlassSVM:
                     svm = SVM(learning_rate, lambda_param)
                 svm.train(train_images, binary_labels)
                 self.classifiers[class_label] = svm
-            print(f"Accuracy for epoch {i}: {self.evaluate(test_images, test_labels)}")
+            accuracy = self.evaluate(test_images, test_labels)
+            print(f"Accuracy for epoch {i}: {accuracy}")
+            accuracies.append(accuracy)
+        return accuracies
 
     def predict(self, image):
         class_scores = {}
@@ -70,9 +79,50 @@ class MulticlassSVM:
 
     def confusion_matrix(self, test_images, test_labels):
         y_pred = np.array([self.predict(sample) for sample in test_images])
-        confusion_mat = confusion_matrix(test_labels, y_pred, labels=np.unique(test_labels))
-        print("Confusion Matrix:")
-        print(confusion_mat)
+        confusion_mat = confusion_matrix(test_labels,
+                                         y_pred, labels=np.unique(test_labels))
+        return confusion_mat
+
+    def plot_accuracy(self, accuracies):
+        plt.plot(range(1, len(accuracies) + 1), accuracies, marker='o')
+        plt.title('Accuracy Over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
+        plt.grid(True)
+        plt.savefig('results/accuracy_plot.pdf')
+        plt.show()
+
+    def plot_confusion_matrix(self, test_images, test_labels):
+        predictions = []
+        for i in range(len(test_images)):
+            pred_class = self.predict(test_images[i])
+            predictions.append(pred_class)
+            print(f"Creating confusion matrix - image {i} ")
+
+        true_labels = test_labels
+        cm = confusion_matrix(true_labels, predictions)
+        cm_percentage = (cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100)
+
+        plt.figure(figsize=(15, 6))
+
+        plt.subplot(1, 2, 1)
+        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
+                    xticklabels=np.arange(10),
+                    yticklabels=np.arange(10))
+        plt.xlabel("Predicted Label")
+        plt.ylabel("True Label")
+        plt.title("Confusion Matrix (Counts)")
+
+        plt.subplot(1, 2, 2)
+        sns.heatmap(cm_percentage, annot=True, fmt=".2f", cmap="Blues",
+                    xticklabels=np.arange(10),
+                    yticklabels=np.arange(10))
+        plt.xlabel("Predicted Label")
+        plt.ylabel("True Label")
+        plt.title("Confusion Matrix (Percentage)")
+
+        plt.tight_layout()
+        plt.savefig("results/confusion_matrix.pdf")
 
 
 def main(arguments):
@@ -95,14 +145,13 @@ def main(arguments):
     test_images = test_images.reshape(len(test_images), -1) / 255
 
     multiclass_svm = MulticlassSVM()
-    multiclass_svm.train(train_images, train_labels, test_images,
-                         test_labels, epochs, learning_rate, lambda_param)
-    multiclass_svm.confusion_matrix(test_images, test_labels)
+    accuracies = multiclass_svm.train(train_images,
+                                      train_labels, test_images,
+                                      test_labels, epochs,
+                                      learning_rate, lambda_param)
+    multiclass_svm.plot_accuracy(accuracies)
 
-    unique_labels, label_counts = np.unique(test_labels, return_counts=True)
-    print("Tests:")
-    for label, count in zip(unique_labels, label_counts):
-        print(f"Label {label}: {count} occurrences")
+    multiclass_svm.plot_confusion_matrix(test_images, test_labels)
 
 
 if __name__ == "__main__":
