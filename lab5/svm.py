@@ -24,24 +24,18 @@ class SVM:
         for image in range(n_samples):
             condition = binary_labels[image] * (
                 np.dot(train_images[image], self.weights) - self.bias) >= 1
-            if condition:
-                self.weights -= self.learning_rate * (
-                    2 * self.lambda_param * self.weights)
-            else:
-                self.weights -= self.learning_rate * (
-                    2 * self.lambda_param * self.weights - np.dot(
-                        train_images[image], binary_labels[image])
-                )
+            if not condition:
+                self.weights -= self.learning_rate * (2 * self.lambda_param *
+                                                      self.weights - np.dot(train_images[image], binary_labels[image]))
                 self.bias -= self.learning_rate * binary_labels[image]
 
     def predict(self, X):
-        linear_output = np.dot(X, self.weights) - self.bias
-        return np.sign(linear_output)
+        return np.dot(X, self.weights) - self.bias
 
 
 class MulticlassSVM:
     def __init__(self):
-        self.classifiers = {}  # Dictionary to store binary classifiers
+        self.classifiers = {}
 
     def train(self, train_images, train_labels,
               test_images, test_labels,
