@@ -86,7 +86,6 @@ class MulticlassSVM:
         plt.ylabel('Accuracy')
         plt.grid(True)
         plt.savefig('results/accuracy_plot.pdf')
-        plt.show()
 
     def plot_confusion_matrix(self, test_images, test_labels):
         predictions = []
@@ -134,9 +133,9 @@ class MulticlassSVM:
         for i in range(10):
             tntp += matrix[i][number]
 
-        precision = round(tp / fptp, 2) if fptp != 0 else 0
-        recall = round(tp / tntp, 2) if tntp != 0 else 0
-        f1_score = (round(2 / ((1 / (tp / fptp)) + (1 / (tp / tntp))), 2)
+        precision = round(tp / fptp, 4) if fptp != 0 else 0
+        recall = round(tp / tntp, 4) if tntp != 0 else 0
+        f1_score = (round(2 / ((1 / (tp / fptp)) + (1 / (tp / tntp))), 4)
                     if fptp != 0 and tntp != 0 else 0)
 
         return {
