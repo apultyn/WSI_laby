@@ -15,15 +15,14 @@ class SVM:
         self.weights = None
         self.bias = 0
 
-    def train(self, train_images, train_labels):
+    def train(self, train_images, binary_labels):
         n_samples, n_features = train_images.shape
-        y_ = np.where(train_labels <= 0, -1, 1)
 
         if self.weights is None:
             self.weights = np.random.rand(n_features)
 
         for image in range(n_samples):
-            condition = y_[image] * (
+            condition = binary_labels[image] * (
                 np.dot(train_images[image], self.weights) - self.bias) >= 1
             if condition:
                 self.weights -= self.learning_rate * (
@@ -31,9 +30,9 @@ class SVM:
             else:
                 self.weights -= self.learning_rate * (
                     2 * self.lambda_param * self.weights - np.dot(
-                        train_images[image], y_[image])
+                        train_images[image], binary_labels[image])
                 )
-                self.bias -= self.learning_rate * y_[image]
+                self.bias -= self.learning_rate * binary_labels[image]
 
     def predict(self, X):
         linear_output = np.dot(X, self.weights) - self.bias
@@ -101,7 +100,8 @@ class MulticlassSVM:
 
         true_labels = test_labels
         cm = confusion_matrix(true_labels, predictions)
-        cm_percentage = (cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100)
+        cm_percentage = (cm.astype('float') /
+                         cm.sum(axis=1)[:, np.newaxis] * 100)
 
         plt.figure(figsize=(15, 6))
 
