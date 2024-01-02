@@ -25,8 +25,10 @@ class SVM:
             condition = binary_labels[image] * (
                 np.dot(train_images[image], self.weights) - self.bias) >= 1
             if not condition:
-                self.weights -= self.learning_rate * (2 * self.lambda_param *
-                                                      self.weights - np.dot(train_images[image], binary_labels[image]))
+                self.weights -= (
+                    self.learning_rate *
+                    (2 * self.lambda_param * self.weights -
+                     np.dot(train_images[image], binary_labels[image])))
                 self.bias -= self.learning_rate * binary_labels[image]
 
     def predict(self, X):
