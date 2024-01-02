@@ -4,13 +4,14 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import json
 from sklearn.metrics import confusion_matrix, accuracy_score
 
 
 class SVM:
-    def __init__(self, learning_rate, lambda_param):
-        self.learning_rate = learning_rate
+    def __init__(self, lambda_param, learning_rate):
         self.lambda_param = lambda_param
+        self.learning_rate = learning_rate
         self.weights = None
         self.bias = 0
 
@@ -19,7 +20,7 @@ class SVM:
         y_ = np.where(train_labels <= 0, -1, 1)
 
         if self.weights is None:
-            self.weights = np.zeros(n_features)
+            self.weights = np.random.rand(n_features)
 
         for image in range(n_samples):
             condition = y_[image] * (
@@ -45,7 +46,7 @@ class MulticlassSVM:
 
     def train(self, train_images, train_labels,
               test_images, test_labels,
-              epochs, learning_rate=0.001, lambda_param=0.01):
+              epochs, lambda_param, learning_rate):
         unique_classes = np.unique(train_labels)
         svm = None
         accuracies = []
@@ -55,11 +56,11 @@ class MulticlassSVM:
                 if class_label in self.classifiers:
                     svm = self.classifiers[class_label]
                 else:
-                    svm = SVM(learning_rate, lambda_param)
+                    svm = SVM(lambda_param, learning_rate)
                 svm.train(train_images, binary_labels)
                 self.classifiers[class_label] = svm
             accuracy = self.evaluate(test_images, test_labels)
-            print(f"Accuracy for epoch {i}: {accuracy}")
+            print(f"Accuracy for epoch {i+1}: {accuracy}")
             accuracies.append(accuracy)
         return accuracies
 
@@ -97,7 +98,6 @@ class MulticlassSVM:
         for i in range(len(test_images)):
             pred_class = self.predict(test_images[i])
             predictions.append(pred_class)
-            print(f"Creating confusion matrix - image {i} ")
 
         true_labels = test_labels
         cm = confusion_matrix(true_labels, predictions)
@@ -124,6 +124,32 @@ class MulticlassSVM:
         plt.tight_layout()
         plt.savefig("results/confusion_matrix.pdf")
 
+        dict = []
+        for i in range(10):
+            dict.append(self.results(cm, i))
+        json_filename = 'results/results.json'
+        with open(json_filename, 'w') as json_file:
+            json.dump(dict, json_file, indent=4)
+
+    def results(self, matrix, number):
+        tp = matrix[number][number]
+        fptp = sum(matrix[number])
+        tntp = 0
+        for i in range(10):
+            tntp += matrix[i][number]
+
+        precision = round(tp / fptp, 2) if fptp != 0 else 0
+        recall = round(tp / tntp, 2) if tntp != 0 else 0
+        f1_score = (round(2 / ((1 / (tp / fptp)) + (1 / (tp / tntp))), 2)
+                    if fptp != 0 and tntp != 0 else 0)
+
+        return {
+            "number": number,
+            "precision": precision,
+            "recall": recall,
+            "f1-score": f1_score
+        }
+
 
 def main(arguments):
     parser = argparse.ArgumentParser()
@@ -148,7 +174,7 @@ def main(arguments):
     accuracies = multiclass_svm.train(train_images,
                                       train_labels, test_images,
                                       test_labels, epochs,
-                                      learning_rate, lambda_param)
+                                      lambda_param, learning_rate)
     multiclass_svm.plot_accuracy(accuracies)
 
     multiclass_svm.plot_confusion_matrix(test_images, test_labels)
