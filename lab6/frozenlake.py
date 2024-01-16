@@ -1,6 +1,8 @@
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
+import sys
 
 
 class FrozenLake:
@@ -22,7 +24,7 @@ class FrozenLake:
             print()
         print()
 
-    def train(self, epochs, learning_rate=0.1, discount_factor=0.99, epsilon=0.1):
+    def train(self, epochs, learning_rate, discount_factor, epsilon):
         wins = 0
         for epoch in range(epochs):
             print(f"Epoch: {epoch+1}")
@@ -45,6 +47,8 @@ class FrozenLake:
                 # Update Q-value
                 new_q = (1 - learning_rate) * current_q + learning_rate * (reward + discount_factor * max_future_q)
                 self.qtable[state][action] = new_q
+
+                self.qtable = np.tanh(self.qtable)
 
             if self.map[self.posy][self.posx] == 'G':
                 print("Found!")
@@ -70,9 +74,9 @@ class FrozenLake:
 
     def get_reward(self, prev_pos):
         if self.map[self.posy][self.posx] == 'G':
-            return 1
+            return 100
         if self.map[self.posy][self.posx] == 'H':
-            return -1
+            return -100
 
         if self.close_reward:
             goal_position = self.find_goal_position()
@@ -124,10 +128,10 @@ class FrozenLake:
                 # Display Q-scores
                 state = (7-y) * 8 + x
                 q_values = self.qtable[state]
-                ax.text(x + 0.5, 7-y + 0.15, f'↑{q_values[0]:.1f}', horizontalalignment='center', fontsize=6, color='blue', zorder=1)
-                ax.text(x + 0.5, 7-y + 0.85, f'↓{q_values[1]:.1f}', horizontalalignment='center', fontsize=6, color='blue', zorder=1)
-                ax.text(x + 0.25, 7-y + 0.5, f'←{q_values[2]:.1f}', horizontalalignment='center', fontsize=6, color='blue', zorder=1)
-                ax.text(x + 0.75, 7-y + 0.5, f'{q_values[3]:.1f}→', horizontalalignment='center', fontsize=6, color='blue', zorder=1)
+                ax.text(x + 0.5, 7-y + 0.15, f'↑({q_values[0]:.1f})', horizontalalignment='center', fontsize=6, color='blue', zorder=1)
+                ax.text(x + 0.5, 7-y + 0.85, f'↓({q_values[1]:.1f})', horizontalalignment='center', fontsize=6, color='blue', zorder=1)
+                ax.text(x + 0.25, 7-y + 0.5, f'←({q_values[2]:.1f})', horizontalalignment='center', fontsize=6, color='blue', zorder=1)
+                ax.text(x + 0.75, 7-y + 0.5, f'({q_values[3]:.1f})→', horizontalalignment='center', fontsize=6, color='blue', zorder=1)
 
         # Set up the axes
         ax.set_xticks(np.arange(0, 8, 1))
@@ -159,14 +163,38 @@ def parseMap(filename):
         return None
 
 
-def main():
-    map_array = parseMap("map.txt")
+def main(arguments):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("map_file")
+    parser.add_argument("close_bonus")
+    parser.add_argument("slippery_rate")
+    parser.add_argument("epochs")
+    parser.add_argument("learning_rate")
+    parser.add_argument("discount_factor")
+    parser.add_argument("epsilon")
+    args = parser.parse_args(arguments[:1])
+
+    mapFile = args.map_file
+    close_bonus = None
+
+    if args.close_bonus == "True":
+        close_bonus = True
+    elif args.close_bonus == "False":
+        close_bonus = False
+
+    slipperyRate = float(args.slippery_rate)
+    epochs = int(args.epochs)
+    learningRate = float(args.learning_rate)
+    discountFactor = float(args.discount_factor)
+    epsilon = float(args.epsilon)
+
+    map_array = parseMap(mapFile)
 
     if map_array is not None:
-        frozenLake = FrozenLake(map_array, 0.5, True)
-        frozenLake.train(50000)
+        frozenLake = FrozenLake(map_array, close_bonus, slipperyRate)
+        frozenLake.train(epochs, learningRate, discountFactor, epsilon)
         frozenLake.print_qtable()
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
