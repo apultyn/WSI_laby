@@ -74,6 +74,32 @@ class FrozenLake:
         print(f"Wins: {successes}, {(successes * 100 / epochs):.2f}%")
         self.print_qtable(test_name)
 
+        return successes, successes_epochs[0] if successes != 0 else None
+
+    def test_track(self, epochs):
+        successes = 0
+        for i in range(epochs):
+            print(f"Test {i+1}")
+            self.posx = 0
+            self.posy = 0
+            while (i > 0 and self.map[self.posy][self.posx] != 'G'):
+                state = self.posy * 8 + self.posx
+                action = np.argmax(self.qtable[state])
+                if action == 0:
+                    self.move_up()
+                elif action == 1:
+                    self.move_down()
+                elif action == 2:
+                    self.move_left()
+                elif action == 3:
+                    self.move_right()
+
+                if random.random() < self.slippery_rate:
+                    self.slip()
+
+                i -= 1
+            if self.map[self.posy][self.posx] == 'G':
+                successes += 1
         return successes
 
     def take_action(self, action):
@@ -193,13 +219,10 @@ class FrozenLake:
         cumulative_successes = []
 
         if epochs_with_success != []:
-            for epoch in range(1, max(epochs_with_success) + 1):
-                print(f"Creating plot: {epoch}")
-                cumulative_successes.append(sum(
-                    1 for e in epochs_with_success if e <= epoch))
+            cumulative_successes = range(len(epochs_with_success))
 
             plt.figure(figsize=(10, 6))
-            plt.plot(range(1, max(epochs_with_success) + 1),
+            plt.plot(epochs_with_success,
                      cumulative_successes, marker='o')
             plt.xlabel('Epoch')
             plt.ylabel('Cumulative Number of Successes')

@@ -1,10 +1,10 @@
 {
     "params": {
-        "test_name": "no_slip_no_bonus",
-        "map_file": "maps/map.txt",
-        "close_bonus": false,
+        "test_name": "no_slip_bonus_3_low_random",
+        "map_file": "maps/map3.txt",
+        "close_bonus": true,
         "slippery_rate": 0.0,
-        "epochs": 10000,
+        "epochs": 50000,
         "learning_rate": 0.1,
         "discount_factor": 0.99,
         "epsilon": 0.1

@@ -1,16 +1,17 @@
 {
     "params": {
-        "test_name": "test",
+        "test_name": "slip_no_bonus",
         "map_file": "maps/map.txt",
         "close_bonus": false,
-        "slippery_rate": 0.0,
-        "epochs": 100,
+        "slippery_rate": 0.5,
+        "epochs": 10000,
         "learning_rate": 0.1,
         "discount_factor": 0.99,
         "epsilon": 0.1
     },
     "results": {
         "successes": 0,
-        "percentage": "0.00%"
+        "percentage": "0.00%",
+        "first_success": null
     }
 }
