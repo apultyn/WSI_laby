@@ -33,19 +33,25 @@ def main(arguments):
     test_name = args.test_name
 
     frozenLake = FrozenLake(map_file, close_bonus, slippery_rate)
-    frozenLake.train(epochs, learning_rate,
-                     discount_factor, epsilon, test_name)
+    successes = frozenLake.train(epochs, learning_rate,
+                                 discount_factor, epsilon, test_name)
 
     if test_name:
         dict = {
-            "test_name": test_name,
-            "map_file": map_file,
-            "close_bonus": close_bonus,
-            "slippery_rate": slippery_rate,
-            "epochs": epochs,
-            "learning_rate": learning_rate,
-            "discount_factor": discount_factor,
-            "epsilon": epsilon
+            "params": {
+                "test_name": test_name,
+                "map_file": map_file,
+                "close_bonus": close_bonus,
+                "slippery_rate": slippery_rate,
+                "epochs": epochs,
+                "learning_rate": learning_rate,
+                "discount_factor": discount_factor,
+                "epsilon": epsilon
+            },
+            "results": {
+                "successes": successes,
+                "percentage": f"{(successes * 100 / epochs):.2f}%"
+            }
         }
         json_filename = f"results/{test_name}_params.json"
         with open(json_filename, 'w') as json_file:

@@ -74,28 +74,7 @@ class FrozenLake:
         print(f"Wins: {successes}, {(successes * 100 / epochs):.2f}%")
         self.print_qtable(test_name)
 
-    def plot_cumulative_successes(self, epochs_with_success, test_name):
-        cumulative_successes = []
-
-        if epochs_with_success != []:
-            for epoch in range(1, max(epochs_with_success) + 1):
-                print(f"Creating plot: {epoch}")
-                cumulative_successes.append(sum(
-                    1 for e in epochs_with_success if e <= epoch))
-
-            plt.figure(figsize=(10, 6))
-            plt.plot(range(1, max(epochs_with_success) + 1),
-                     cumulative_successes, marker='o')
-            plt.xlabel('Epoch')
-            plt.ylabel('Cumulative Number of Successes')
-            plt.title('Cumulative Number of Successes over Epochs')
-            plt.grid(True)
-            if test_name:
-                plt.savefig(f"results/{test_name}_successes.pdf")
-            else:
-                plt.show()
-        else:
-            print("No successes!")
+        return successes
 
     def take_action(self, action):
         prev_pos = (self.posy, self.posx)
@@ -209,3 +188,26 @@ class FrozenLake:
             plt.savefig(f"results/{test_name}_map.pdf")
         else:
             plt.show()
+
+    def plot_cumulative_successes(self, epochs_with_success, test_name):
+        cumulative_successes = []
+
+        if epochs_with_success != []:
+            for epoch in range(1, max(epochs_with_success) + 1):
+                print(f"Creating plot: {epoch}")
+                cumulative_successes.append(sum(
+                    1 for e in epochs_with_success if e <= epoch))
+
+            plt.figure(figsize=(10, 6))
+            plt.plot(range(1, max(epochs_with_success) + 1),
+                     cumulative_successes, marker='o')
+            plt.xlabel('Epoch')
+            plt.ylabel('Cumulative Number of Successes')
+            plt.title('Cumulative Number of Successes over Epochs')
+            plt.grid(True)
+            if test_name:
+                plt.savefig(f"results/{test_name}_successes.pdf")
+            else:
+                plt.show()
+        else:
+            print("No successes!")
