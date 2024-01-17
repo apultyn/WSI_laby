@@ -76,13 +76,14 @@ class FrozenLake:
 
         return successes, successes_epochs[0] if successes != 0 else None
 
-    def test_track(self, epochs):
+    def test_track(self):
         successes = 0
-        for i in range(epochs):
-            print(f"Test {i+1}")
+        for test in range(1000):
+            print(f"Test {test+1}")
             self.posx = 0
             self.posy = 0
-            while (i > 0 and self.map[self.posy][self.posx] != 'G'):
+            moves = 100
+            while (moves > 0 and self.map[self.posy][self.posx] != 'G'):
                 state = self.posy * 8 + self.posx
                 action = np.argmax(self.qtable[state])
                 if action == 0:
@@ -97,7 +98,7 @@ class FrozenLake:
                 if random.random() < self.slippery_rate:
                     self.slip()
 
-                i -= 1
+                moves -= 1
             if self.map[self.posy][self.posx] == 'G':
                 successes += 1
         return successes

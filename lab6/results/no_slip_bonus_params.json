@@ -3,15 +3,21 @@
         "test_name": "no_slip_bonus",
         "map_file": "maps/map.txt",
         "close_bonus": true,
-        "slippery_rate": 0.0,
-        "epochs": 50000,
+        "slippery_rate": 0.5,
+        "epochs": 20000,
         "learning_rate": 0.1,
         "discount_factor": 0.99,
         "epsilon": 0.1
     },
     "results": {
-        "successes": 37879,
-        "percentage": "75.76%",
-        "first_success": 39
+        "training": {
+            "successes": 8391,
+            "percentage": "41.95%",
+            "first_success": 242
+        },
+        "test": {
+            "successes": 657,
+            "percentage": "65.70%"
+        }
     }
 }
