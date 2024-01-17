@@ -142,6 +142,8 @@ class FrozenLake:
             return -100
 
         if self.close_reward:
+            if prev_pos == (self.posy, self.posx):
+                return -10
             goal_position = self.find_goal_position()
             curr_pos_dist = np.linalg.norm(
                 np.array([self.posy, self.posx]) - np.array(goal_position))

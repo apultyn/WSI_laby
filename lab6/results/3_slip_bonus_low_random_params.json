@@ -1,0 +1,23 @@
+{
+    "params": {
+        "test_name": "3_slip_bonus_low_random",
+        "map_file": "maps/map3.txt",
+        "close_bonus": true,
+        "slippery_rate": 0.3,
+        "epochs": 50000,
+        "learning_rate": 0.1,
+        "discount_factor": 0.99,
+        "epsilon": 0.1
+    },
+    "results": {
+        "training": {
+            "successes": 4827,
+            "percentage": "9.65%",
+            "first_success": 860
+        },
+        "test": {
+            "successes": 537,
+            "percentage": "53.70%"
+        }
+    }
+}
