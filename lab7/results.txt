@@ -1,0 +1,6 @@
+Burglary if only Mary called: 0.88%
+Burglary if only John called: 1.46%
+Burglary if both called: 68.05%
+Earthquake if both called: 4.32%
+Effectiveness of our deal: 79.78%
+False alarm chance: 12.66%

@@ -1,0 +1,54 @@
+[
+    {
+        "name": "Burglary if only Mary called",
+        "variable": ["Burglary"],
+        "evidence": {
+            "John": 0,
+            "Mary": 1
+        },
+        "which": 1
+    },
+    {
+        "name": "Burglary if only John called",
+        "variable": ["Burglary"],
+        "evidence": {
+            "John": 1,
+            "Mary": 0
+        },
+        "which": 1
+    },
+    {
+        "name": "Burglary if both called",
+        "variable": ["Burglary"],
+        "evidence": {
+            "John": 1,
+            "Mary": 1
+        },
+        "which": 1
+    },
+    {
+        "name": "Earthquake if both called",
+        "variable": ["Earthquake"],
+        "evidence": {
+            "John": 1,
+            "Mary": 1
+        },
+        "which": 1
+    },
+    {
+        "name": "Effectiveness of our deal",
+        "variable": ["CallAnswered"],
+        "evidence": {
+            "Burglary": 1
+        },
+        "which": 1
+    },
+    {
+        "name": "False alarm chance",
+        "variable": ["CallAnswered"],
+        "evidence": {
+            "Burglary": 0
+        },
+        "which": 1
+    }
+]
